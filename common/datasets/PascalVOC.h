@@ -35,7 +35,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "ODDatasets.h"
 
 
-namespace od {
+namespace od
+{
 /** \brief Pascal VOC 2007 dataset
    * \author Xiongtao Chen
    *
