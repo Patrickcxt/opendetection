@@ -32,12 +32,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <boost/filesystem.hpp>
 #include <algorithm>
 
-namespace bf = boost::filesystem
+namespace bf = boost::filesystem;
 
 
-namespace od {
+namespace od
+{
 
-  virtual ODBatch getNextBatch(int batch_size)
+  ODBatch ODDataset::getNextBatch(int batch_size)
   {
     if (iter_ == 0 || iter_ >= train_image_list_.size())
     {
@@ -47,7 +48,7 @@ namespace od {
     }
 
     std::vector<std::string> image_list;
-    std::vector<ODAnnotation*> annotation_list;
+    std::vector<ODAnnotation> annotation_list;
 
     for (int i = iter_; i < iter_ + batch_size; ++i)
     {
@@ -67,7 +68,7 @@ namespace od {
     for (bf::directory_iterator itr(p); itr != end_itr; ++itr)
     {
       if (bf::is_regular_file(itr->path()))
-        files.push_back(itr->path())
+        files.push_back(itr->path().string());
     }
     return files;
     

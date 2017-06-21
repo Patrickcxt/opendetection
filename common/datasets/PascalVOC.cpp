@@ -7,23 +7,24 @@
 
 #include "PascalVOC.h"
 
-#include "rapidxm/rapidxml.hpp"
-#include "rapidxm/rapidxml_utils.hpp"
-#include "rapidxm/rapidxml_print.hpp"
+#include "rapidxml/rapidxml.hpp"
+#include "rapidxml/rapidxml_utils.hpp"
+#include "rapidxml/rapidxml_print.hpp"
 
+namespace rx = rapidxml;
 
-
-namespace od {
+namespace od
+{
 
   void PascalVOC::loadClassList()
   {
-    std::string categories = {"aeroplane", "bicycle", "bird", "boat", "bottle",
+    std::string categories[] = {"aeroplane", "bicycle", "bird", "boat", "bottle",
                            "bus", "car", "cat", "chair", "cow", 
                            "diningtable", "dog", "horse", "motorbike", "person", 
                            "pottedplant", "sheep", "sofa", "train", "tvmonitor",
                            "background"};
-    this->num_classes = 21;  // hard code;
-    this->annotations_ = std::vector<std::string> (categories, categories+this->num_classes);
+    this->num_classes_ = 21;  // hard code;
+    this->class_list_ = std::vector<std::string> (categories, categories+this->num_classes_);
   }
 
   void PascalVOC::loadImageLists()
@@ -124,26 +125,29 @@ namespace od {
     ODDataset::test_image_list_ = test_image_list_;
   }
 
-  void PascalVOC::loadAnnotations() {
+  void PascalVOC::loadAnnotations()
+  {
+    
+    // these paths are just for text. refine after discussion
     std::string train_path = "/home/amax/cxt/data/pascal_voc/VOCTrain/VOC2007/Annotations/";
-    std::string train_path = "/home/amax/cxt/data/pascal_voc/VOCTrain/VOC2007/Annotations/";
+    std::string test_path = "/home/amax/cxt/data/pascal_voc/VOCTrain/VOC2007/Annotations/";
 
     //  load annotations for trainset.
-    std::vector<std::string> files = get_files_in_directory(train_path);
-    for (std::vector<std::string> it = files.begin(); it != files.end(); it++)
+    std::vector<std::string> files = ODDataset::get_files_in_directory(train_path, "jpg");
+    for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); it++)
     {
-      Annotation annotation = load_single_annotation(*it);
-      int dot_pos = (*it).find('.')
+      ODAnnotation annotation = load_single_annotation(*it);
+      int dot_pos = (*it).find('.');
       std::string prefix_name = (*it).substr(0, dot_pos);
-      ODDataset::annotations_[prefix_name] = &annotation;
+      ODDataset::annotations_[prefix_name] = annotation;
     }
 
     // load annotations for testset.
-    std::vector<std::string> files = get_files_in_directory(train_path);
-    for (std::vector<std::string> it = files.begin(); it != files.end(); it++)
+    files = ODDataset::get_files_in_directory(train_path, "jpg");
+    for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); it++)
     {
-      Annotation annotation = load_single_annotation(*it);
-      int dot_pos = (*it).find('.')
+      ODAnnotation annotation = load_single_annotation(*it);
+      int dot_pos = (*it).find('.');
       std::string prefix_name = (*it).substr(0, dot_pos);
       ODDataset::annotations_[prefix_name] = annotation;
     }
@@ -151,38 +155,40 @@ namespace od {
 
   void PascalVOC::evaluation() {}
 
-  Annotation PascalVOC::load_single_annotation(std::string path) {
-      file<> fdoc(path);
-      xml_document<> doc;
+  ODAnnotation PascalVOC::load_single_annotation(std::string xml_file)
+  {
+      rx::file<> fdoc(xml_file.c_str());
+      rx::xml_document<> doc;
       doc.parse<0>(fdoc.data());
-      xml_node<>* root = doc.first_node();
+      rx::xml_node<>* root = doc.first_node();
 
       std::string filename = root->first_node("filename")->value();
-      xml_node<>* size = root->first_node("size");
-      int width = size->first_node("width")->value();
-      int height = size->first_node("height")->value();
-      int channel = size->first_node("depth")->value();
+      rx::xml_node<>* size = root->first_node("size");
+      int width = atoi((size->first_node("width")->value()));
+      int height = atoi((size->first_node("height")->value()));
+      int channel = atoi((size->first_node("depth")->value()));
 
-      std::vector<ODObject*> objects;
-      for (xml_node<>* node = root->first_node("object"); node; node = node->next_sibling())
+      std::vector<ODObject> objects;
+      for (rx::xml_node<>* node = root->first_node("object"); node; node = node->next_sibling())
       {
           std::string class_name = node->first_node("name")->value();
           std::string pose = node->first_node("pose")->value();
-          bool is_truuncated = node->first_node("truncated")->value();
-          bool is_difficult = node->first_node("difficult")->value();
-          int xmin = node->first_node("xmin")->value();
-          int ymin = node->first_node("ymin")->value();
-          int xmax = node->first_node("xmax")->value();
-          int ymax = node->first_node("yamax")->value();
+          bool is_truncated = atoi((node->first_node("truncated")->value()));
+          bool is_difficult = atoi((node->first_node("difficult")->value()));
+          int xmin = atoi((node->first_node("xmin")->value()));
+          int ymin = atoi((node->first_node("ymin")->value()));
+          int xmax = atoi((node->first_node("xmax")->value()));
+          int ymax = atoi((node->first_node("yamax")->value()));
           int bbox[] = {xmin, ymin, xmax, ymax};
 
           ODObject obj = ODObject(class_name, pose, is_truncated, is_difficult, bbox);
-          objects.push_back(&obj);
+          objects.push_back(obj);
       
       }
       
-      Annotation annotation = Annotation(filename, width, height, channel, objects);
+      ODAnnotation annotation = ODAnnotation(filename, width, height, channel, objects);
       return annotation;
   
   }
 }
+
