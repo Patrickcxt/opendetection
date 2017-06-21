@@ -49,15 +49,10 @@ namespace od
         std::cerr << "error: unable to open input file: " << trainset_path_ << std::endl;
         return;
     }
-    int i = 0;
     while (input >> s)
     {
-        // std::cout << i << " :";
-        // std::cout << s << std::endl;
         train_image_list_.push_back(s);
-        i++;
     }
-    std::cout << i << " " << train_image_list_.size() << std::endl;
     input.close();
     input.clear();
 
@@ -68,15 +63,10 @@ namespace od
         std::cerr << "error: unable to open input file: " << valset_path_ << std::endl;
         return;
     }
-    i = 0;
     while (input >> s)
     {
-        // std::cout << i << " :";
-        // std::cout << s << std::endl;
         val_image_list_.push_back(s);
-        i++;
     }
-    std::cout << i << " " << val_image_list_.size() << std::endl;
     input.close();
     input.clear();
 
@@ -87,15 +77,10 @@ namespace od
         std::cerr << "error: unable to open input file: " << trainvalset_path_ << std::endl;
         return;
     }
-    i = 0;
     while (input >> s)
     {
-        // std::cout << i << " :";
-        // std::cout << s << std::endl;
         trainval_image_list_.push_back(s);
-        i++;
     }
-    std::cout << i << " " << trainval_image_list_.size() << std::endl;
     input.close();
     input.clear();
 
@@ -106,15 +91,10 @@ namespace od
         std::cerr << "error: unable to open input file: " << testset_path_ << std::endl;
         return;
     }
-    i = 0;
     while (input >> s)
     {
-        // std::cout << i << " :";
-        // std::cout << s << std::endl;
         test_image_list_.push_back(s);
-        i++;
     }
-    std::cout << i << " " << test_image_list_.size() << std::endl;
     input.close();
     input.clear();
 
