@@ -29,10 +29,6 @@ namespace od
 
   void PascalVOC::loadImageLists()
   {
-    std::string trainset_path_ = "/home/amax/cxt/data/pascal_voc/VOCTrain/VOC2007/ImageSets/Layout/train.txt";
-    std::string valset_path_ = "/home/amax/cxt/data/pascal_voc/VOCTrain/VOC2007/ImageSets/Layout/val.txt";
-    std::string trainvalset_path_ = "/home/amax/cxt/data/pascal_voc/VOCTrain/VOC2007/ImageSets/Layout/trainval.txt";
-    std::string testset_path_ = "/home/amax/cxt/data/pascal_voc/VOCTest/VOC2007/ImageSets/Layout/test.txt";
 
     std::vector<std::string> train_image_list_;
     std::vector<std::string> val_image_list_;
@@ -99,38 +95,42 @@ namespace od
     input.clear();
 
 
-    ODDataset::train_image_list_ = train_image_list_;
-    ODDataset::val_image_list_ = val_image_list_;
-    ODDataset::trainval_image_list_ = trainval_image_list_;
-    ODDataset::test_image_list_ = test_image_list_;
+    this->train_image_list_ = train_image_list_;
+    this->val_image_list_ = val_image_list_;
+    this->trainval_image_list_ = trainval_image_list_;
+    this->test_image_list_ = test_image_list_;
   }
 
   void PascalVOC::loadAnnotations()
   {
     
-    // these paths are just for text. refine after discussion
-    std::string train_path = "/home/amax/cxt/data/pascal_voc/VOCTrain/VOC2007/Annotations/";
-    std::string test_path = "/home/amax/cxt/data/pascal_voc/VOCTrain/VOC2007/Annotations/";
-
     //  load annotations for trainset.
-    std::vector<std::string> files = ODDataset::get_files_in_directory(train_path, "jpg");
+    std::vector<std::string> files = ODDataset::get_files_in_directory(this->train_annotation_path_, "jpg");
+    std::cout << files.size() << std::endl;
     for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); it++)
     {
       ODAnnotation annotation = load_single_annotation(*it);
+      
+      int slash_pos = (*it).rfind('/')+1;
       int dot_pos = (*it).find('.');
-      std::string prefix_name = (*it).substr(0, dot_pos);
-      ODDataset::annotations_[prefix_name] = annotation;
+      std::string prefix_name = (*it).substr(slash_pos, dot_pos-slash_pos);
+      this->annotations_[prefix_name] = annotation;
     }
+    std::cout << this->annotations_.size() << std::endl;
+
 
     // load annotations for testset.
-    files = ODDataset::get_files_in_directory(train_path, "jpg");
+    files = ODDataset::get_files_in_directory(this->test_annotation_path_, "jpg");
+    std::cout << files.size() << std::endl;
     for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); it++)
     {
       ODAnnotation annotation = load_single_annotation(*it);
+      int slash_pos = (*it).rfind('/')+1;
       int dot_pos = (*it).find('.');
-      std::string prefix_name = (*it).substr(0, dot_pos);
-      ODDataset::annotations_[prefix_name] = annotation;
+      std::string prefix_name = (*it).substr(slash_pos, dot_pos-slash_pos);
+      this->annotations_[prefix_name] = annotation;
     }
+    std::cout << this->annotations_.size() << std::endl;
   }
 
   void PascalVOC::evaluation() {}
@@ -148,6 +148,7 @@ namespace od
       int height = atoi((size->first_node("height")->value()));
       int channel = atoi((size->first_node("depth")->value()));
 
+
       std::vector<ODObject> objects;
       for (rx::xml_node<>* node = root->first_node("object"); node; node = node->next_sibling())
       {
@@ -155,10 +156,12 @@ namespace od
           std::string pose = node->first_node("pose")->value();
           bool is_truncated = atoi((node->first_node("truncated")->value()));
           bool is_difficult = atoi((node->first_node("difficult")->value()));
-          int xmin = atoi((node->first_node("xmin")->value()));
-          int ymin = atoi((node->first_node("ymin")->value()));
-          int xmax = atoi((node->first_node("xmax")->value()));
-          int ymax = atoi((node->first_node("yamax")->value()));
+          rx::xml_node<>* box_node = node->first_node("bndbox");
+          
+          int xmin = atoi((box_node->first_node("xmin")->value()));
+          int ymin = atoi((box_node->first_node("ymin")->value()));
+          int xmax = atoi((box_node->first_node("xmax")->value()));
+          int ymax = atoi((box_node->first_node("ymax")->value()));
           int bbox[] = {xmin, ymin, xmax, ymax};
 
           ODObject obj = ODObject(class_name, pose, is_truncated, is_difficult, bbox);

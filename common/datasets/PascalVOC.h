@@ -44,12 +44,26 @@ namespace od
   class PascalVOC: public ODDataset
   {
   public:
-    PascalVOC(int task_type_, std::string image_path_, std::string annotation_path_) : 
-        ODDataset("pascal_voc_2007", task_type_, image_path_, annotation_path_) 
+    PascalVOC(std::string base_path_, int task_type_) : 
+        ODDataset("pascal_voc_2007", base_path_, task_type_) 
     {
+        // Set paths.
+        this->train_image_path_ = this->base_path_ + "VOCTrain/VOC2007/JPEGImages/";
+        this->test_image_path_ = this->base_path_ + "VOCTest/VOC2007/JPEGImages/";
+        this->trainset_path_ = this->base_path_ + "VOCTrain/VOC2007/ImageSets/Layout/train.txt";
+        this->valset_path_ = this->base_path_ + "VOCTrain/VOC2007/ImageSets/Layout/val.txt";
+        this->trainvalset_path_ = this->base_path_ + "VOCTrain/VOC2007/ImageSets/Layout/trainval.txt";
+        this->testset_path_ = this->base_path_ + "VOCTest/VOC2007/ImageSets/Layout/test.txt";
+        this->train_annotation_path_ = this->base_path_ + "VOCTrain/VOC2007/Annotations/";
+        this->test_annotation_path_ = this->base_path_ + "VOCTest/VOC2007/Annotations/";
+
+        std::cout << "======= Loading Classes List ...  ===============" << std::endl;
+        loadClassList();
+        std::cout << "======= Loading Image List ...  ===============" << std::endl;
         loadImageLists();
-        std::cout << "======================" << std::endl;
+        std::cout << "======= Loading Annotations ...  ===============" << std::endl;
         loadAnnotations();
+        std::cout << "======= Done ...  ===============" << std::endl;
     }
 
     // override
@@ -67,10 +81,17 @@ namespace od
 
   private:
 
+    std::string train_image_path_;
+    std::string test_image_path_;
+
     std::string trainset_path_;     // path of train.txt
     std::string trainvalset_path_;  // path of trainval.txt
     std::string valset_path_;       // path of val.txt
     std::string testset_path_;      // path of test.txt
+
+    std::string train_annotation_path_;
+    std::string test_annotation_path_;
+
 
     ODAnnotation load_single_annotation(std::string img_name_);
 

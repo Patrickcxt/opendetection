@@ -20,9 +20,12 @@ int main() {
     int bbox[] = {1, 2, 3, 4};
     string name = "cat", pose = "back";
     od::ODObject obj = od::ODObject(name, pose, 0, 0, bbox);
+    cout << obj << endl;
     std::vector<od::ODObject> objs;
     objs.push_back(obj);
     od::ODAnnotation a = od::ODAnnotation(string("0000.jpg"), 224, 224, 3, objs);
+
+    cout << a << endl;
 
     map<string, od::ODAnnotation> M;
     M["0000.jpg"] = a;
@@ -31,8 +34,19 @@ int main() {
     cout << M["0000.jpg"].objects_[0].class_name_ << endl;
     */
 
-    string p1 = "", p2 = "";
-    od::PascalVOC pascal = od::PascalVOC(0, p1, p2);
+    string p1 = "/home/amax/cxt/data/pascal_voc/", p2 = "";
+    od::PascalVOC pascal = od::PascalVOC(p1, 0);
+    cout << pascal.getDatasetName() << endl;
+    cout << pascal.getNumOfClasses() << endl;
+    cout << pascal.getClassesList().size() << endl;
+    cout << pascal.getTrainImageList().size() << endl;
+    cout << pascal.getValImageList().size() << endl;
+    cout << pascal.getTrainvalImageList().size() << endl;
+    cout << pascal.getTestImageList().size() << endl;
+    cout << pascal.getAllAnnotations().size() << endl;
+    od::ODAnnotation a = pascal.getAnnotationByName("000005");
+    cout << a << endl;
+
 
     /*
     path p("./");

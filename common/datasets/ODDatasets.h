@@ -61,6 +61,16 @@ namespace od
               bbox_[i] = bbox[i];
           }
       }
+
+      friend std::ostream& operator <<(std::ostream& out, const ODObject& object)
+      {
+        int xmin = object.bbox_[0], ymin = object.bbox_[1];
+        int xmax = object.bbox_[2], ymax = object.bbox_[3];
+
+        out << "Category: "   << object.class_name_ << " | "
+            << "Bbox: [" << xmin << ", " << ymin<< ", " << xmax << ", " << ymax << "]" << std::endl;
+        return out;
+      }
   };
 
   /** \brief The annotation class for each image.
@@ -85,6 +95,21 @@ namespace od
         height_ = height;
         channel_ = channel;
         objects_ = objects; 
+      }
+
+      friend std::ostream& operator <<(std::ostream& out, const ODAnnotation& annotation)
+      {
+        out << "------------------------------------------" << std::endl;
+        out << "filename: " << annotation.filename_ << std::endl
+            << "(width, height, channel):  (" << annotation.width_ << ",  " 
+            << annotation.height_ << ", "  << annotation.channel_ << ")" << std::endl;
+        std::vector<ODObject> objects = annotation.objects_;
+        for (int i = 0; i < objects.size(); i++)
+        {
+            out << "Object " << i+1 << std::endl << objects[i] << std::endl;
+        }
+        out << "------------------------------------------" << std::endl;
+        return out;
       }
   };
 
@@ -118,12 +143,11 @@ namespace od
   {
   public:
 
-    ODDataset(std::string name_, int task_type_, std::string image_path_, std::string annotation_path_) 
+    ODDataset(std::string name_, std::string base_path_, int task_type_) 
     { 
       this->name_ = name_;
       this->task_type_ = task_type_;
-      this->image_path_ = image_path_;
-      this->annotation_path = annotation_path_;
+      this->base_path_ = base_path_;
       this->iter_ = 0;
     }
 
@@ -175,7 +199,7 @@ namespace od
       return annotations_; 
     }
 
-    ODAnnotation getSingleAnnotation(std::string image_name)
+    ODAnnotation getAnnotationByName(std::string image_name)
     {
       return annotations_[image_name]; 
     }
@@ -189,8 +213,7 @@ namespace od
   protected:
 
     std::string name_;  // Name of the dataset
-    std::string image_path_;
-    std::string annotation_path;
+    std::string base_path_;  // root path for a specific dataset, e.g. /path/to/coco/
     int task_type_;      // Task to perfom.  Classification or Detection etc.
     int num_classes_;    // Number of the categories
     int iter_;           // cursor that points to current batch. 
@@ -201,7 +224,7 @@ namespace od
     std::vector<std::string> train_image_list_;   // image list of training set
     std::vector<std::string> val_image_list_;     // image list of validation set
     std::vector<std::string> trainval_image_list_;   // image list of training and validation set, if provided
-    std::vector<std::string> test_image_list_;    // image list of test set
+    std::vector<std::string> test_image_list_;    // image list of test set 
 
     std::map<std::string, ODAnnotation> annotations_;    // annotations for each images, ODAnnotation class/structure to be implemented later.
 
