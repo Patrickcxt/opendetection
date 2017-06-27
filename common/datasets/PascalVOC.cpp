@@ -24,7 +24,9 @@ namespace od
                            "pottedplant", "sheep", "sofa", "train", "tvmonitor",
                            "background"};
     this->num_classes_ = 21;  // hard code;
-    this->class_list_ = std::vector<std::string> (categories, categories+this->num_classes_);
+    for (int i = 1; i < this->num_classes_; i++)
+        this->class_list_[i] = categories[i];
+    //this->class_list_ = std::vector<std::string> (categories, categories+this->num_classes_);
   }
 
   void PascalVOC::loadImageLists()

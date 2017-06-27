@@ -1,8 +1,12 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include "ODDatasets.h"
 #include "PascalVOC.h"
+#include "MSCoco.h"
 
-
+#include "rapidjson/document.h"
+using namespace rapidjson;
 /*
 #include "rapidxml/rapidxml.hpp"
 #include "rapidxml/rapidxml_print.hpp"
@@ -15,6 +19,73 @@ using namespace boost::filesystem;
 using namespace std;
 
 int main() {
+
+    string p2 = "/media/amax/Seagate Backup Plus Drive/cxt/data/MSCOCO/";
+    od::MSCoco coco = od::MSCoco(p2, 0);
+    cout << coco.getDatasetName() << endl;
+    cout << coco.getNumOfClasses() << endl;
+    cout << coco.getClassesList().size() << endl;
+    cout << coco.getTrainImageList().size() << endl;
+    cout << coco.getValImageList().size() << endl;
+    cout << coco.getTrainvalImageList().size() << endl;
+    cout << coco.getTestImageList().size() << endl;
+    cout << coco.getAllAnnotations().size() << endl;
+    od::ODAnnotation a = coco.getAnnotationByName("000005");
+    cout << a << endl;
+    /*
+    static const char* kTypeNames[] = 
+        { "Null", "False", "True", "Object", "Array", "String", "Number"};
+    ifstream input;
+    string json;
+    string path = "/media/amax/Seagate Backup Plus Drive/cxt/data/MSCOCO/Annotations/instances/instances_val2014.json";
+    input.open(path.c_str());
+    if (!input) cout << "error" << endl;
+    stringstream buffer;
+    buffer << input.rdbuf();
+    json = buffer.str();
+    Document* document = new Document();
+    document->Parse(json.c_str());
+    cout << "=====================" << endl;
+    for (Value::ConstMemberIterator it = document->MemberBegin(); it != document->MemberEnd(); ++it)
+    {  
+        cout << it->name.GetString() << endl;
+        
+    }
+    Value& ann = (*document)["annotations"];
+    cout << ann.Size() << endl;
+    Value& cat = (*document)["categories"];
+    cout << cat.Size() << endl;
+    Value& img = (*document)["images"];
+    cout << img.Size() << endl;
+
+    getchar();
+    for (int i = 0; i < ann.Size(); i++) {
+        cout << ann[i]["id"].GetInt() << " ";
+        cout << ann[i]["image_id"].GetInt() << " ";
+        cout << ann[i]["category_id"].GetInt() << " ";
+        cout << ann[i]["area"].GetFloat() << " [";
+        cout << ann[i]["bbox"][0].GetFloat() << " ";
+        cout << ann[i]["bbox"][1].GetFloat() << " ";
+        cout << ann[i]["bbox"][2].GetFloat() << " ";
+        cout << ann[i]["bbox"][3].GetFloat() << "]" << endl;
+    }
+
+    getchar();
+    for (int i = 0; i < cat.Size(); i++) {
+        cout << cat[i]["id"].GetInt() << " ";
+        cout << cat[i]["name"].GetString() << " ";
+        cout << cat[i]["supercategory"].GetString() << endl;
+    }
+    getchar();
+    for (int i = 0; i < img.Size(); i++) {
+        cout << img[i]["id"].GetInt() << " ";
+        cout << img[i]["file_name"].GetString() << " ";
+        cout << img[i]["width"].GetInt() << " ";
+        cout << img[i]["height"].GetInt() << endl;
+    }
+    */
+
+
 
     /*
     int bbox[] = {1, 2, 3, 4};
@@ -34,7 +105,8 @@ int main() {
     cout << M["0000.jpg"].objects_[0].class_name_ << endl;
     */
 
-    string p1 = "/home/amax/cxt/data/pascal_voc/", p2 = "";
+    /*
+    string p1 = "/home/amax/cxt/data/pascal_voc/";
     od::PascalVOC pascal = od::PascalVOC(p1, 0);
     cout << pascal.getDatasetName() << endl;
     cout << pascal.getNumOfClasses() << endl;
@@ -46,6 +118,11 @@ int main() {
     cout << pascal.getAllAnnotations().size() << endl;
     od::ODAnnotation a = pascal.getAnnotationByName("000005");
     cout << a << endl;
+    */
+
+
+
+
 
 
     /*

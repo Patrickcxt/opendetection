@@ -163,7 +163,7 @@ namespace od
 
     virtual void loadClassList() {}
 
-    std::vector<std::string> getClassesList() const  // return the classes list of the dataset
+    std::map<int, std::string> getClassesList() const  // return the classes list of the dataset
     {
       return class_list_; 
     }
@@ -219,7 +219,7 @@ namespace od
     int iter_;           // cursor that points to current batch. 
 
 
-    std::vector<std::string> class_list_; // List of categories
+    std::map<int, std::string> class_list_; // List of categories
 
     std::vector<std::string> train_image_list_;   // image list of training set
     std::vector<std::string> val_image_list_;     // image list of validation set
