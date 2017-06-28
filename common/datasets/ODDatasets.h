@@ -228,7 +228,8 @@ namespace od
 
     std::map<std::string, ODAnnotation> annotations_;    // annotations for each images, ODAnnotation class/structure to be implemented later.
 
-    std::vector<std::string> get_files_in_directory(std::string base_path, std::string ext);
+    std::vector<std::string> get_files_in_directory(std::string base_path, bool is_folder, std::string ext="");
+    std::vector<std::string> split(std::string str, char sep);
     
   };
 

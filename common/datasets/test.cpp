@@ -4,10 +4,11 @@
 #include "ODDatasets.h"
 #include "PascalVOC.h"
 #include "MSCoco.h"
+#include "ImageNet.h"
 
+/*
 #include "rapidjson/document.h"
 using namespace rapidjson;
-/*
 #include "rapidxml/rapidxml.hpp"
 #include "rapidxml/rapidxml_print.hpp"
 #include "rapidxml/rapidxml_utils.hpp"
@@ -20,6 +21,34 @@ using namespace std;
 
 int main() {
 
+    string p3 = "/home/amax/cxt/data/tiny-imagenet-200/";
+    od::ImageNet imagenet = od::ImageNet(p3, 0);
+    cout << imagenet.getDatasetName() << endl;
+    cout << imagenet.getNumOfClasses() << endl;
+    cout << imagenet.getClassesList().size() << endl;
+    cout << imagenet.getTrainImageList().size() << endl;
+    cout << imagenet.getValImageList().size() << endl;
+    cout << imagenet.getTrainvalImageList().size() << endl;
+    cout << imagenet.getTestImageList().size() << endl;
+    cout << imagenet.getAllAnnotations().size() << endl;
+    od::ODAnnotation a = imagenet.getAnnotationByName("val_6139.JPEG");
+    cout << a << endl;
+
+    /*
+    string p1 = "/home/amax/cxt/data/pascal_voc/";
+    od::PascalVOC pascal = od::PascalVOC(p1, 0);
+    cout << pascal.getDatasetName() << endl;
+    cout << pascal.getNumOfClasses() << endl;
+    cout << pascal.getClassesList().size() << endl;
+    cout << pascal.getTrainImageList().size() << endl;
+    cout << pascal.getValImageList().size() << endl;
+    cout << pascal.getTrainvalImageList().size() << endl;
+    cout << pascal.getTestImageList().size() << endl;
+    cout << pascal.getAllAnnotations().size() << endl;
+    od::ODAnnotation a = pascal.getAnnotationByName("000005");
+    cout << a << endl;
+    */
+    /*
     string p2 = "/media/amax/Seagate Backup Plus Drive/cxt/data/MSCOCO/";
     od::MSCoco coco = od::MSCoco(p2, 0);
     cout << coco.getDatasetName() << endl;
@@ -32,6 +61,7 @@ int main() {
     cout << coco.getAllAnnotations().size() << endl;
     od::ODAnnotation a = coco.getAnnotationByName("000005");
     cout << a << endl;
+    */
     /*
     static const char* kTypeNames[] = 
         { "Null", "False", "True", "Object", "Array", "String", "Number"};
@@ -104,26 +134,6 @@ int main() {
     cout << M["0000.jpg"].width_ << endl;
     cout << M["0000.jpg"].objects_[0].class_name_ << endl;
     */
-
-    /*
-    string p1 = "/home/amax/cxt/data/pascal_voc/";
-    od::PascalVOC pascal = od::PascalVOC(p1, 0);
-    cout << pascal.getDatasetName() << endl;
-    cout << pascal.getNumOfClasses() << endl;
-    cout << pascal.getClassesList().size() << endl;
-    cout << pascal.getTrainImageList().size() << endl;
-    cout << pascal.getValImageList().size() << endl;
-    cout << pascal.getTrainvalImageList().size() << endl;
-    cout << pascal.getTestImageList().size() << endl;
-    cout << pascal.getAllAnnotations().size() << endl;
-    od::ODAnnotation a = pascal.getAnnotationByName("000005");
-    cout << a << endl;
-    */
-
-
-
-
-
 
     /*
     path p("./");

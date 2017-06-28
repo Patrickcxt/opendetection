@@ -128,7 +128,6 @@ namespace od
     // load annotation of training set
     rj::Value& ann = (*train_doc_)["annotations"];
     std::cout << ann.Size() << std::endl;
-    /*
     for (int i = 0; i < ann.Size(); i++)
     {
       int id = ann[i]["id"].GetInt();
@@ -146,7 +145,6 @@ namespace od
       ODObject obj = ODObject(this->class_list_[cate_id-1], "", 0, 0, bbox);
       M[id].push_back(obj);
     }
-    */
 
     // load annotation of validation set
     ann = (*val_doc_)["annotations"];

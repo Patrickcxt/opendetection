@@ -60,18 +60,33 @@ namespace od
     return batch;
   }
 
-  std::vector<std::string> ODDataset::get_files_in_directory(std::string base_path, std::string ext)
+  std::vector<std::string> ODDataset::get_files_in_directory(std::string base_path, bool is_folder, std::string ext)
   {
     std::vector<std::string> files;
     bf::path p(base_path);
     bf::directory_iterator end_itr;
     for (bf::directory_iterator itr(p); itr != end_itr; ++itr)
     {
-      if (bf::is_regular_file(itr->path()))
+      if (!is_folder && bf::is_regular_file(itr->path()))
+        files.push_back(itr->path().string());
+      else
         files.push_back(itr->path().string());
     }
     return files;
-    
   }
 
+  std::vector<std::string> ODDataset::split(std::string str, char sep)
+  {
+    std::vector<std::string> items;
+    size_t pos = str.find(sep);
+    while (pos != std::string::npos)
+    {
+      std::string item = str.substr(0, pos);
+      items.push_back(item);
+      str = str.substr(pos+1);
+      pos = str.find(sep);
+    }
+    items.push_back(str);
+    return items;
+  }
 }
