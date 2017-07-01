@@ -48,10 +48,10 @@ namespace od
       std::string pose_;  // if provided
       bool is_truncated_; // if provided
       bool is_difficult_; // if provided
-      int bbox_[4];   // Bounding box: xmin, ymin, xmax, ymax
+      float bbox_[4];   // Bounding box: xmin, ymin, xmax, ymax
 
       ODObject(std::string class_name, std::string pose, 
-              bool is_truncated, bool is_difficult, int* bbox)
+              bool is_truncated, bool is_difficult, float* bbox)
       {
           class_name_ = class_name;
           pose_ = pose;
@@ -80,35 +80,21 @@ namespace od
    */
   struct ODAnnotation
   {
-      std::string filename_; 
-      int width_;
-      int height_;
-      int channel_;
       std::vector<ODObject> objects_;  // Object list that a image contains.
 
       ODAnnotation() {}
-      ODAnnotation(std::string filename, int width, int height, 
-              int channel, std::vector<ODObject> objects)
-      {
-        filename_ = filename;
-        width_ = width;
-        height_ = height;
-        channel_ = channel;
-        objects_ = objects; 
-      }
+      ODAnnotation(std::vector<ODObject> objects): objects_(objects) {}
 
       friend std::ostream& operator <<(std::ostream& out, const ODAnnotation& annotation)
       {
-        out << "------------------------------------------" << std::endl;
-        out << "filename: " << annotation.filename_ << std::endl
-            << "(width, height, channel):  (" << annotation.width_ << ",  " 
-            << annotation.height_ << ", "  << annotation.channel_ << ")" << std::endl;
         std::vector<ODObject> objects = annotation.objects_;
+        out << "---------------------------------------------------------------------------" << std::endl;
+        out << objects.size() << " objects contained: " << std::endl;
         for (int i = 0; i < objects.size(); i++)
         {
             out << "Object " << i+1 << std::endl << objects[i] << std::endl;
         }
-        out << "------------------------------------------" << std::endl;
+        out << "---------------------------------------------------------------------------" << std::endl;
         return out;
       }
   };
@@ -161,16 +147,12 @@ namespace od
       return num_classes_; 
     }
 
-    virtual void loadClassList() {}
 
     std::map<int, std::string> getClassesList() const  // return the classes list of the dataset
     {
       return class_list_; 
     }
 
-    // load the image path list of train_image_list, val_image_list and test_image_list, maybe private.
-    virtual void loadImageLists() {}  
- 
     std::vector<std::string> getTrainImageList() const
     {
       return train_image_list_;
@@ -190,9 +172,6 @@ namespace od
     {
       return test_image_list_; 
     }
-
-    // load label and ground truth from the annotation files, maybe private
-    virtual void loadAnnatations() {}  
 
     std::map<std::string, ODAnnotation> getAllAnnotations() const
     {
@@ -230,7 +209,18 @@ namespace od
 
     std::vector<std::string> get_files_in_directory(std::string base_path, bool is_folder, std::string ext="");
     std::vector<std::string> split(std::string str, char sep);
-    
+
+  private:
+
+    // load the list of all categories
+    virtual void loadClassList() {}
+
+    // load the image path list of train_image_list, val_image_list and test_image_list, maybe private.
+    virtual void loadImageLists() {}  
+
+    // load label and ground truth from the annotation files, maybe private
+    virtual void loadAnnatations() {}  
+
   };
 
 

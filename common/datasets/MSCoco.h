@@ -58,7 +58,7 @@ namespace od
         this->test_annotation_path_ = "";  // Not provided yet
 
         std::cout << "======= Loading Annotation Files ...  ===============" << std::endl;  // takes several seconds
-        loadDataset();
+        loadJsonDataset();
         std::cout << "======= Loading Classes List ...  ===============" << std::endl;
         loadClassList();
         std::cout << "======= Loading Image List ...  ===============" << std::endl;
@@ -68,15 +68,6 @@ namespace od
         std::cout << "======= Done ...  ===============" << std::endl;
     }
 
-    void loadDataset();
-    // override
-    void loadClassList();
-
-    // override
-    void loadImageLists();
-
-    // override
-    void loadAnnotations();
 
     void evaluation();
 
@@ -95,9 +86,17 @@ namespace od
     rj::Document* train_doc_;        // training dataset
     rj::Document* val_doc_;          // validation dataset
     rj::Document* test_doc_;  // not provided
-    std::map<int, int> width_;
-    std::map<int, int> height_;
 
+    void loadJsonDataset();
+
+    // override
+    void loadClassList();
+
+    // override
+    void loadImageLists();
+
+    // override
+    void loadAnnotations();
   };
 }
 

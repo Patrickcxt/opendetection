@@ -66,14 +66,6 @@ namespace od
         std::cout << "======= Done ...  ===============" << std::endl;
     }
 
-    // override
-    void loadClassList();
-
-    // override
-    void loadImageLists();
-
-    // override
-    void loadAnnotations();
 
     void evaluation();
 
@@ -92,8 +84,16 @@ namespace od
     std::string train_annotation_path_;
     std::string test_annotation_path_;
 
-
     ODAnnotation load_single_annotation(std::string img_name_);
+
+    // override
+    void loadClassList();
+
+    // override
+    void loadImageLists();
+
+    // override
+    void loadAnnotations();
 
   };
 }

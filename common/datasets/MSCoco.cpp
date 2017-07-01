@@ -12,7 +12,7 @@
 namespace od
 {
 
-  void MSCoco::loadDataset()
+  void MSCoco::loadJsonDataset()
   {
     // Parse train_annotation_path
     std::ifstream input;
@@ -53,7 +53,6 @@ namespace od
 
   void MSCoco::loadClassList()
   {
-    this->num_classes_ = 80;
     std::map<int, std::string> categories;
     rj::Value& cate = (*train_doc_)["categories"];
     std::cout << cate.Size() << std::endl;
@@ -61,9 +60,10 @@ namespace od
     {
         int id = cate[i]["id"].GetInt();
         std::string class_name = cate[i]["name"].GetString();
-        std::cout << id << " " << class_name;
+        std::cout << id << " " << class_name << std::endl;
         categories[id] = class_name; 
     }
+    this->num_classes_ = cate.Size();
     this->class_list_ = categories;
   }
 
@@ -84,12 +84,12 @@ namespace od
       char buff[33]; sprintf(buff, "%d", id);
       std::string sid = std::string(buff);    // use the id as the short form of image name, save the store space.
       std::string file_name = imgs[i]["file_name"].GetString();  // indeed, file_name = xxxxxx_00..00id.jpg
-      int width = imgs[i]["width"].GetInt();
-      int height = imgs[i]["height"].GetInt();
+      //int width = imgs[i]["width"].GetInt();
+      //int height = imgs[i]["height"].GetInt();
       train_image_list_.push_back(sid);
       trainval_image_list_.push_back(sid);
 
-      this->width_[id] = width; this->height_[id] = height;   // For annotation
+      //this->width_[id] = width; this->height_[id] = height;   // For annotation
     }
 
     // load image list for validation set
@@ -101,12 +101,12 @@ namespace od
       char buff[33]; sprintf(buff, "%d", id);
       std::string sid = std::string(buff);
       std::string file_name = imgs[i]["file_name"].GetString();
-      int width = imgs[i]["width"].GetInt();
-      int height = imgs[i]["height"].GetInt();
+      //int width = imgs[i]["width"].GetInt();
+      //int height = imgs[i]["height"].GetInt();
       val_image_list_.push_back(sid);
       trainval_image_list_.push_back(sid);
 
-      this->width_[id] = width; this->height_[id] = height;   // For annotation
+      //this->width_[id] = width; this->height_[id] = height;   // For annotation
     }
 
     // load image list for test set
@@ -130,57 +130,47 @@ namespace od
     std::cout << ann.Size() << std::endl;
     for (int i = 0; i < ann.Size(); i++)
     {
-      int id = ann[i]["id"].GetInt();
-      std::cout << id << " ";
+      long long id = ann[i]["id"].GetFloat();
       int image_id = ann[i]["image_id"].GetInt();
       int cate_id = ann[i]["category_id"].GetInt();
-      std::cout << cate_id << " ";
-      int xmin = ann[i]["bbox"][0].GetFloat();
-      int ymin = ann[i]["bbox"][1].GetFloat();
-      int xmax = ann[i]["bbox"][2].GetFloat();
-      int ymax = ann[i]["bbox"][3].GetFloat();
-      std::cout << xmin << std::endl;
+      float xmin = ann[i]["bbox"][0].GetFloat();
+      float ymin = ann[i]["bbox"][1].GetFloat();
+      float xd = ann[i]["bbox"][2].GetFloat();
+      float yd = ann[i]["bbox"][3].GetFloat();
+      //std::cout << id << " " << image_id << " " << cate_id << " " <<  xmin << " " << ymin << " " << xmax << " " << ymax << std::endl;
 
-      int bbox[] = {xmin, ymin, xmax, ymax};
-      ODObject obj = ODObject(this->class_list_[cate_id-1], "", 0, 0, bbox);
-      M[id].push_back(obj);
+      float bbox[] = {xmin, ymin, xmin+xd, ymin+yd};
+      ODObject obj = ODObject(this->class_list_[cate_id], "", 0, 0, bbox);
+      M[image_id].push_back(obj);
     }
 
     // load annotation of validation set
     ann = (*val_doc_)["annotations"];
     std::cout << ann.Size() << std::endl;
-    getchar();
-    int cnt = 0;
     for (int i = 0; i < ann.Size(); i++)
     {
-      std::cout << ++cnt << ": " << std::endl;
-      int id = ann[i]["id"].GetInt();
-      std::cout << id << " ";
+      long long id = ann[i]["id"].GetFloat();
       int image_id = ann[i]["image_id"].GetInt();
       int cate_id = ann[i]["category_id"].GetInt();
-      std::cout << cate_id << " ";
-      int xmin = ann[i]["bbox"][0].GetFloat();
-      int ymin = ann[i]["bbox"][1].GetFloat();
-      int xmax = ann[i]["bbox"][2].GetFloat();
-      int ymax = ann[i]["bbox"][3].GetFloat();
-      std::cout << xmin << std::endl;
+      float xmin = ann[i]["bbox"][0].GetFloat();
+      float ymin = ann[i]["bbox"][1].GetFloat();
+      float xd = ann[i]["bbox"][2].GetFloat();
+      float yd = ann[i]["bbox"][3].GetFloat();
+      //std::cout << id << " " << image_id << " " << cate_id << " " <<  xmin << " " << ymin << " " << xmax << " " << ymax << std::endl;
 
-      int bbox[] = {xmin, ymin, xmax, ymax};
-      ODObject obj = ODObject(this->class_list_[cate_id-1], "", 0, 0, bbox);
-      M[id].push_back(obj);
+      float bbox[] = {xmin, ymin, xmin+xd, ymin+yd};
+      ODObject obj = ODObject(this->class_list_[cate_id], "", 0, 0, bbox);
+      M[image_id].push_back(obj);
     }
-    int count = 0;
     for (std::map<int, std::vector<ODObject> >::iterator it = M.begin(); it != M.end(); it++)
     {
-      count += 1;
-      int width = this->width_[it->first];
-      int height = this->height_[it->first];
+      //int width = this->width_[it->first];
+      //int height = this->height_[it->first];
       char buff[33]; sprintf(buff, "%d", it->first);
       std::string file_name = std::string(buff);
-      ODAnnotation annotation = ODAnnotation(file_name, width, height, 3, it->second);    
+      ODAnnotation annotation = ODAnnotation(it->second);    
       this->annotations_[file_name] = annotation;
     }
-    std::cout << count << std::endl;
     M.clear();
   }
 

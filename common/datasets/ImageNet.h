@@ -61,21 +61,12 @@ namespace od
         std::cout << "======= Done ...  ===============" << std::endl;
     }
 
-    // override
-    void loadClassList();
-
-    // override
-    void loadImageLists();
-
-    // override
-    void loadAnnotations();
 
     void evaluation();
 
     ~ImageNet() {}
 
   private:
-
 
     std::string trainset_path_;
     std::string valset_path_;
@@ -84,6 +75,14 @@ namespace od
     std::map<int, std::string> id2wnid_;   // map 0, 1, ..n to wnid.  e.g. wnid2id_[0] = "n01443537";
     std::map<std::string, int> wnid2id_;
 
+    // override
+    void loadClassList();
+
+    // override
+    void loadImageLists();
+
+    // override
+    void loadAnnotations();
   };
 }
 

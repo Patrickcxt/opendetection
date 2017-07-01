@@ -164,14 +164,14 @@ namespace od
           int ymin = atoi((box_node->first_node("ymin")->value()));
           int xmax = atoi((box_node->first_node("xmax")->value()));
           int ymax = atoi((box_node->first_node("ymax")->value()));
-          int bbox[] = {xmin, ymin, xmax, ymax};
+          float bbox[] = {xmin, ymin, xmax, ymax};
 
           ODObject obj = ODObject(class_name, pose, is_truncated, is_difficult, bbox);
           objects.push_back(obj);
       
       }
       
-      ODAnnotation annotation = ODAnnotation(filename, width, height, channel, objects);
+      ODAnnotation annotation = ODAnnotation(objects);
       return annotation;
   
   }

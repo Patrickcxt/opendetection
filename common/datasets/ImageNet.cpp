@@ -121,7 +121,7 @@ namespace od
         int xmax = atoi(items[3].c_str());
         int ymax = atoi(items[4].c_str());
         //std::cout << xmin << " " << ymin << " " << xmax << " " << ymax << std:: endl;
-        int bbox[4] = {xmin, ymin, xmax, ymax};
+        float bbox[4] = {xmin, ymin, xmax, ymax};
         ODObject object = ODObject(this->class_list_[id], "", 0, 0, bbox);
         M[image_name].push_back(object);
         //train_image_list.push_back(image_name);
@@ -150,7 +150,7 @@ namespace od
       int ymin = atoi(items[3].c_str());
       int xmax = atoi(items[4].c_str());
       int ymax = atoi(items[5].c_str());
-      int bbox[4] = {xmin, ymin, xmax, ymax};
+      float bbox[4] = {xmin, ymin, xmax, ymax};
       ODObject object = ODObject(class_list_[id], "", 0, 0, bbox);
       M[image_name].push_back(object);
       //val_image_list.push_back(image_name);
@@ -163,7 +163,7 @@ namespace od
     // Construct anntations
     for (std::map<std::string, std::vector<ODObject> >::iterator it = M.begin(); it != M.end(); it++)
     {
-      ODAnnotation ann = ODAnnotation(it->first, 64, 64, 3, it->second); 
+      ODAnnotation ann = ODAnnotation(it->second); 
       annotations[it->first] = ann;
     }
 
