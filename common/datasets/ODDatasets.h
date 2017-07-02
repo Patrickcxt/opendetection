@@ -64,8 +64,8 @@ namespace od
 
       friend std::ostream& operator <<(std::ostream& out, const ODObject& object)
       {
-        int xmin = object.bbox_[0], ymin = object.bbox_[1];
-        int xmax = object.bbox_[2], ymax = object.bbox_[3];
+        float xmin = object.bbox_[0], ymin = object.bbox_[1];
+        float xmax = object.bbox_[2], ymax = object.bbox_[3];
 
         out << "Category: "   << object.class_name_ << " | "
             << "Bbox: [" << xmin << ", " << ymin<< ", " << xmax << ", " << ymax << "]" << std::endl;

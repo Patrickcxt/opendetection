@@ -50,3 +50,6 @@ OD_ADD_EXAMPLE(od_multialgo_files FILES od_multialgo_files.cpp
 OD_ADD_EXAMPLE(od_multialgo_pc FILES od_multialgo_pc.cpp
                 LINK_WITH od_miscellaneous_detector)
 
+# added by cxt
+OD_ADD_EXAMPLE(od_load_dataset FILES od_load_dataset.cpp
+                LINK_WITH od_common)

@@ -7,9 +7,14 @@
 
 #include "PascalVOC.h"
 
-#include "rapidxml/rapidxml.hpp"
-#include "rapidxml/rapidxml_utils.hpp"
-#include "rapidxml/rapidxml_print.hpp"
+/*
+#include "../../3rdparty/rapidxml/rapidxml.hpp"
+#include "../../3rdparty/rapidxml/rapidxml_utils.hpp"
+*/
+
+#include "3rdparty/rapidxml/rapidxml.hpp"
+#include "3rdparty/rapidxml/rapidxml_utils.hpp"
+#include "3rdparty/rapidxml/rapidxml_print.hpp"
 
 namespace rx = rapidxml;
 
@@ -24,7 +29,7 @@ namespace od
                            "pottedplant", "sheep", "sofa", "train", "tvmonitor",
                            "background"};
     this->num_classes_ = 21;  // hard code;
-    for (int i = 1; i < this->num_classes_; i++)
+    for (int i = 0; i < this->num_classes_; i++)
         this->class_list_[i] = categories[i];
     //this->class_list_ = std::vector<std::string> (categories, categories+this->num_classes_);
   }
@@ -108,7 +113,7 @@ namespace od
     
     //  load annotations for trainset.
     std::vector<std::string> files = ODDataset::get_files_in_directory(this->train_annotation_path_, "jpg");
-    std::cout << files.size() << std::endl;
+    //std::cout << files.size() << std::endl;
     for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); it++)
     {
       ODAnnotation annotation = load_single_annotation(*it);
@@ -118,12 +123,12 @@ namespace od
       std::string prefix_name = (*it).substr(slash_pos, dot_pos-slash_pos);
       this->annotations_[prefix_name] = annotation;
     }
-    std::cout << this->annotations_.size() << std::endl;
+    //std::cout << this->annotations_.size() << std::endl;
 
 
     // load annotations for testset.
     files = ODDataset::get_files_in_directory(this->test_annotation_path_, "jpg");
-    std::cout << files.size() << std::endl;
+    //std::cout << files.size() << std::endl;
     for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); it++)
     {
       ODAnnotation annotation = load_single_annotation(*it);
@@ -132,7 +137,7 @@ namespace od
       std::string prefix_name = (*it).substr(slash_pos, dot_pos-slash_pos);
       this->annotations_[prefix_name] = annotation;
     }
-    std::cout << this->annotations_.size() << std::endl;
+    //std::cout << this->annotations_.size() << std::endl;
   }
 
   void PascalVOC::evaluation() {}
@@ -160,10 +165,10 @@ namespace od
           bool is_difficult = atoi((node->first_node("difficult")->value()));
           rx::xml_node<>* box_node = node->first_node("bndbox");
           
-          int xmin = atoi((box_node->first_node("xmin")->value()));
-          int ymin = atoi((box_node->first_node("ymin")->value()));
-          int xmax = atoi((box_node->first_node("xmax")->value()));
-          int ymax = atoi((box_node->first_node("ymax")->value()));
+          float xmin = atof((box_node->first_node("xmin")->value()));
+          float ymin = atof((box_node->first_node("ymin")->value()));
+          float xmax = atof((box_node->first_node("xmax")->value()));
+          float ymax = atof((box_node->first_node("ymax")->value()));
           float bbox[] = {xmin, ymin, xmax, ymax};
 
           ODObject obj = ODObject(class_name, pose, is_truncated, is_difficult, bbox);

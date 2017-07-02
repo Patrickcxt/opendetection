@@ -116,10 +116,10 @@ namespace od
         std::vector<std::string> items = split(s, '\t');
         
         std::string image_name = items[0];
-        int xmin = atoi(items[1].c_str());
-        int ymin = atoi(items[2].c_str());
-        int xmax = atoi(items[3].c_str());
-        int ymax = atoi(items[4].c_str());
+        float xmin = atof(items[1].c_str());
+        float ymin = atof(items[2].c_str());
+        float xmax = atof(items[3].c_str());
+        float ymax = atof(items[4].c_str());
         //std::cout << xmin << " " << ymin << " " << xmax << " " << ymax << std:: endl;
         float bbox[4] = {xmin, ymin, xmax, ymax};
         ODObject object = ODObject(this->class_list_[id], "", 0, 0, bbox);
@@ -146,10 +146,10 @@ namespace od
       std::vector<std::string> items = split(s, '\t');
       std::string image_name = items[0];
       int id = wnid2id_[items[1]];
-      int xmin = atoi(items[2].c_str());
-      int ymin = atoi(items[3].c_str());
-      int xmax = atoi(items[4].c_str());
-      int ymax = atoi(items[5].c_str());
+      float xmin = atof(items[2].c_str());
+      float ymin = atof(items[3].c_str());
+      float xmax = atof(items[4].c_str());
+      float ymax = atof(items[5].c_str());
       float bbox[4] = {xmin, ymin, xmax, ymax};
       ODObject object = ODObject(class_list_[id], "", 0, 0, bbox);
       M[image_name].push_back(object);

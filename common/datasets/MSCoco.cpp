@@ -55,12 +55,12 @@ namespace od
   {
     std::map<int, std::string> categories;
     rj::Value& cate = (*train_doc_)["categories"];
-    std::cout << cate.Size() << std::endl;
+    //std::cout << cate.Size() << std::endl;
     for (int i = 0; i < cate.Size(); i++)
     {
         int id = cate[i]["id"].GetInt();
         std::string class_name = cate[i]["name"].GetString();
-        std::cout << id << " " << class_name << std::endl;
+        //std::cout << id << " " << class_name << std::endl;
         categories[id] = class_name; 
     }
     this->num_classes_ = cate.Size();
@@ -77,7 +77,7 @@ namespace od
 
     // load image list for training set
     rj::Value& imgs = (*train_doc_)["images"];
-    std::cout << imgs.Size() << std::endl;
+    //std::cout << imgs.Size() << std::endl;
     for (int i = 0; i < imgs.Size(); i++)
     {
       int id = imgs[i]["id"].GetInt();
@@ -94,7 +94,7 @@ namespace od
 
     // load image list for validation set
     imgs = (*val_doc_)["images"];
-    std::cout << imgs.Size() << std::endl;
+    //std::cout << imgs.Size() << std::endl;
     for (int i = 0; i < imgs.Size(); i++)
     {
       int id = imgs[i]["id"].GetInt();
@@ -127,7 +127,7 @@ namespace od
  
     // load annotation of training set
     rj::Value& ann = (*train_doc_)["annotations"];
-    std::cout << ann.Size() << std::endl;
+    //std::cout << ann.Size() << std::endl;
     for (int i = 0; i < ann.Size(); i++)
     {
       long long id = ann[i]["id"].GetFloat();
@@ -146,7 +146,7 @@ namespace od
 
     // load annotation of validation set
     ann = (*val_doc_)["annotations"];
-    std::cout << ann.Size() << std::endl;
+    //std::cout << ann.Size() << std::endl;
     for (int i = 0; i < ann.Size(); i++)
     {
       long long id = ann[i]["id"].GetFloat();

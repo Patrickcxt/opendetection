@@ -30,6 +30,12 @@ if(build)
         "utils/utils.h"
         "utils/ODFeatureDetector2D.h"
 
+        # add by cxt
+        "datasets/ODDatasets.h"
+        "datasets/PascalVOC.h"
+        "datasets/ImageNet.h"
+        "datasets/MSCoco.h"
+
         "bindings/svmlight.h"
         )
 
@@ -41,6 +47,12 @@ if(build)
         "pipeline/ODScene.cpp"
         "utils/utils.cpp"
         "utils/ODFeatureDetector2D.cpp"
+    
+        # add by cxt
+        "datasets/ODDatasets.cpp"
+        "datasets/PascalVOC.cpp"
+        "datasets/ImageNet.cpp"
+        "datasets/MSCoco.cpp"
         )
 
     OD_ADD_LIBRARY_ALL("${SUBSYS_NAME}" SRCS ${srcs} INCS ${incs} ${impl_incs})

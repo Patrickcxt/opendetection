@@ -21,48 +21,52 @@ using namespace std;
 
 int main() {
 
-    /*
+    cout << "Loading Pascal VOC dataset ..." << endl;
     string p1 = "/home/amax/cxt/data/pascal_voc/";
     od::PascalVOC pascal = od::PascalVOC(p1, 0);
-    cout << pascal.getDatasetName() << endl;
-    cout << pascal.getNumOfClasses() << endl;
-    cout << pascal.getClassesList().size() << endl;
-    cout << pascal.getTrainImageList().size() << endl;
-    cout << pascal.getValImageList().size() << endl;
-    cout << pascal.getTrainvalImageList().size() << endl;
-    cout << pascal.getTestImageList().size() << endl;
-    cout << pascal.getAllAnnotations().size() << endl;
+    cout << "Dataset name: " << pascal.getDatasetName() << endl;
+    cout << "Number of categories: " << pascal.getNumOfClasses() << endl;
+    cout << "Number of classlist: " << pascal.getClassesList().size() << endl;
+    cout << "Number of training images: " << pascal.getTrainImageList().size() << endl;
+    cout << "Number of validation images: " << pascal.getValImageList().size() << endl;
+    cout << "Number of trainging and validation images: " << pascal.getTrainvalImageList().size() << endl;
+    cout << "Number of test images: " << pascal.getTestImageList().size() << endl;
+    cout << "Number of annotated images: " << pascal.getAllAnnotations().size() << endl;
+    cout << "Annotation of image 000005.jpg: " << endl;
     od::ODAnnotation a = pascal.getAnnotationByName("000005");
     cout << a << endl;
-    */
+    cout << endl;
 
-    /*
-    string p3 = "/home/amax/cxt/data/tiny-imagenet-200/";
-    od::ImageNet imagenet = od::ImageNet(p3, 0);
-    cout << imagenet.getDatasetName() << endl;
-    cout << imagenet.getNumOfClasses() << endl;
-    cout << imagenet.getClassesList().size() << endl;
-    cout << imagenet.getTrainImageList().size() << endl;
-    cout << imagenet.getValImageList().size() << endl;
-    cout << imagenet.getTrainvalImageList().size() << endl;
-    cout << imagenet.getTestImageList().size() << endl;
-    cout << imagenet.getAllAnnotations().size() << endl;
-    od::ODAnnotation a = imagenet.getAnnotationByName("val_6139.JPEG");
+    cout << "Loading Tiny-imagenet dataset ..." << endl;
+    string p2 = "/home/amax/cxt/data/tiny-imagenet-200/";
+    od::ImageNet imagenet = od::ImageNet(p2, 0);
+    cout << "Dataset name: " << imagenet.getDatasetName() << endl;
+    cout << "Number of categories: " << imagenet.getNumOfClasses() << endl;
+    cout << "Number of classlist: " << imagenet.getClassesList().size() << endl;
+    cout << "Number of training images: " << imagenet.getTrainImageList().size() << endl;
+    cout << "Number of validation images: " << imagenet.getValImageList().size() << endl;
+    cout << "Number of trainging and validation images: " << imagenet.getTrainvalImageList().size() << endl;
+    cout << "Number of test images: " << imagenet.getTestImageList().size() << endl;
+    cout << "Number of annotated images: " << imagenet.getAllAnnotations().size() << endl;
+    cout << "Annotation of image val_6139.JPEG: " << endl;
+    a = imagenet.getAnnotationByName("val_6139.JPEG");
     cout << a << endl;
-    */
+    cout << endl;
 
-    string p2 = "/media/amax/Seagate Backup Plus Drive/cxt/data/MSCOCO/";
-    od::MSCoco coco = od::MSCoco(p2, 0);
-    cout << coco.getDatasetName() << endl;
-    cout << coco.getNumOfClasses() << endl;
-    cout << coco.getClassesList().size() << endl;
-    cout << coco.getTrainImageList().size() << endl;
-    cout << coco.getValImageList().size() << endl;
-    cout << coco.getTrainvalImageList().size() << endl;
-    cout << coco.getTestImageList().size() << endl;
-    cout << coco.getAllAnnotations().size() << endl;
-    od::ODAnnotation a = coco.getAnnotationByName("233116");
+    string p3 = "/media/amax/Seagate Backup Plus Drive/cxt/data/MSCOCO/";
+    od::MSCoco coco = od::MSCoco(p3, 0);
+    cout << "Dataset name: " << coco.getDatasetName() << endl;
+    cout << "Number of categories: " << coco.getNumOfClasses() << endl;
+    cout << "Number of classlist: " << coco.getClassesList().size() << endl;
+    cout << "Number of training images: " << coco.getTrainImageList().size() << endl;
+    cout << "Number of validation images: " << coco.getValImageList().size() << endl;
+    cout << "Number of trainging and validation images: " << coco.getTrainvalImageList().size() << endl;
+    cout << "Number of test images: " << coco.getTestImageList().size() << endl;
+    cout << "Number of annotated images: " << coco.getAllAnnotations().size() << endl;
+    cout << "Annotation of image 233116.jpg: " << endl;
+    a = coco.getAnnotationByName("233116");
     cout << a << endl;
+    cout << endl;
 
     /*
     static const char* kTypeNames[] = 
