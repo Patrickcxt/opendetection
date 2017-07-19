@@ -7,14 +7,14 @@
 
 #include "PascalVOC.h"
 
-/*
 #include "../../3rdparty/rapidxml/rapidxml.hpp"
 #include "../../3rdparty/rapidxml/rapidxml_utils.hpp"
-*/
 
+/*
 #include "3rdparty/rapidxml/rapidxml.hpp"
 #include "3rdparty/rapidxml/rapidxml_utils.hpp"
 #include "3rdparty/rapidxml/rapidxml_print.hpp"
+*/
 
 namespace rx = rapidxml;
 
@@ -30,7 +30,11 @@ namespace od
                            "background"};
     this->num_classes_ = 21;  // hard code;
     for (int i = 0; i < this->num_classes_; i++)
-        this->class_list_[i] = categories[i];
+    {
+        this->label2name_[i] = categories[i];
+        this->name2label_[categories[i]] = i;
+    }
+        
     //this->class_list_ = std::vector<std::string> (categories, categories+this->num_classes_);
   }
 
@@ -160,6 +164,7 @@ namespace od
       for (rx::xml_node<>* node = root->first_node("object"); node; node = node->next_sibling())
       {
           std::string class_name = node->first_node("name")->value();
+          int label = this->name2label_[class_name];
           std::string pose = node->first_node("pose")->value();
           bool is_truncated = atoi((node->first_node("truncated")->value()));
           bool is_difficult = atoi((node->first_node("difficult")->value()));
@@ -171,7 +176,8 @@ namespace od
           float ymax = atof((box_node->first_node("ymax")->value()));
           float bbox[] = {xmin, ymin, xmax, ymax};
 
-          ODObject obj = ODObject(class_name, pose, is_truncated, is_difficult, bbox);
+          //ODObject obj = ODObject(class_name, pose, is_truncated, is_difficult, bbox);
+          ODObject obj = ODObject(label, pose, is_truncated, is_difficult, bbox);
           objects.push_back(obj);
       
       }

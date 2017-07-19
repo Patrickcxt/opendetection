@@ -44,16 +44,18 @@ namespace od
    *
    */
   struct ODObject {
-      std::string class_name_;
+      //std::string class_name_;
+      int label_;
       std::string pose_;  // if provided
       bool is_truncated_; // if provided
       bool is_difficult_; // if provided
       float bbox_[4];   // Bounding box: xmin, ymin, xmax, ymax
 
-      ODObject(std::string class_name, std::string pose, 
+      ODObject(int label, std::string pose, 
               bool is_truncated, bool is_difficult, float* bbox)
       {
-          class_name_ = class_name;
+          //class_name_ = class_name;
+          label_ = label;
           pose_ = pose;
           is_truncated_ = is_truncated;
           is_difficult_ = is_difficult;
@@ -67,7 +69,7 @@ namespace od
         float xmin = object.bbox_[0], ymin = object.bbox_[1];
         float xmax = object.bbox_[2], ymax = object.bbox_[3];
 
-        out << "Category: "   << object.class_name_ << " | "
+        out << "Category: "   << object.label_ << " | "
             << "Bbox: [" << xmin << ", " << ymin<< ", " << xmax << ", " << ymax << "]" << std::endl;
         return out;
       }
@@ -150,7 +152,8 @@ namespace od
 
     std::map<int, std::string> getClassesList() const  // return the classes list of the dataset
     {
-      return class_list_; 
+      //return class_list_; 
+      return label2name_;
     }
 
     std::vector<std::string> getTrainImageList() const
@@ -185,6 +188,8 @@ namespace od
 
     virtual ODBatch getNextBatch(int batch_size_); // get a minibatch, ODBatch class/structure to be implemented later.
 
+    virtual void convertDatasetToLmdb(std::string subset, std::string save_dir, int resize_height, int resize_width) {}  // convert dataset to lmdb format for caffe input.
+
     virtual void evaluate() {}
 
     virtual ~ODDataset() {}
@@ -198,7 +203,9 @@ namespace od
     int iter_;           // cursor that points to current batch. 
 
 
-    std::map<int, std::string> class_list_; // List of categories
+    //std::map<int, std::string> class_list_; // List of categories
+    std::map<int, std::string> label2name_; // List of categories
+    std::map<std::string, int> name2label_; 
 
     std::vector<std::string> train_image_list_;   // image list of training set
     std::vector<std::string> val_image_list_;     // image list of validation set
@@ -207,8 +214,11 @@ namespace od
 
     std::map<std::string, ODAnnotation> annotations_;    // annotations for each images, ODAnnotation class/structure to be implemented later.
 
+
+
     std::vector<std::string> get_files_in_directory(std::string base_path, bool is_folder, std::string ext="");
     std::vector<std::string> split(std::string str, char sep);
+    void convert_dataset_to_lmdb(std::vector<std::string> image_list, std::string img_prefix, std::string save_dir, int resize_height, int resize_width);
 
   private:
 
@@ -220,6 +230,7 @@ namespace od
 
     // load label and ground truth from the annotation files, maybe private
     virtual void loadAnnatations() {}  
+
 
   };
 

@@ -61,7 +61,7 @@ namespace od
         std::cout << "======= Done ...  ===============" << std::endl;
     }
 
-
+    void convertDatasetToLmdb(std::string subset, std::string save_dir, int resize_height, int resize_width);
     void evaluation();
 
     ~ImageNet() {}

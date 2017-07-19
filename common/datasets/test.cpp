@@ -2,9 +2,11 @@
 #include <fstream>
 #include <sstream>
 #include "ODDatasets.h"
-#include "PascalVOC.h"
-#include "MSCoco.h"
+//#include "PascalVOC.h"
+//#include "MSCoco.h"
 #include "ImageNet.h"
+#include "lmdb.h"
+#include "caffe/util/db.hpp"
 
 /*
 #include "rapidjson/document.h"
@@ -17,10 +19,46 @@ using namespace rapidjson;
 using namespace rapidxml;
 using namespace boost::filesystem;
 */
+
+#include <algorithm>
+#include <fstream>  // NOLINT(readability/streams)
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "boost/scoped_ptr.hpp"
+#include "gflags/gflags.h"
+#include "glog/logging.h"
+
+#include "caffe/proto/caffe.pb.h"
+#include "caffe/util/db.hpp"
+#include "caffe/util/format.hpp"
+#include "caffe/util/io.hpp"
+#include "caffe/util/rng.hpp"
+
 using namespace std;
+using namespace caffe;
+
+bool ConvertLabelToDatum(od::ODAnnotation an, Datum* datum) {
+    vector<od::ODObject> objects = an.objects_;
+    datum->set_width(4);
+    datum->set_height(objects.size());
+    datum->set_channels(1);
+    google::protobuf::RepeatedField<float>* datumFloatData = datum->mutable_float_data();
+    for (int i = 0; i < objects.size(); i++) {
+        datumFloatData->Add(objects[i].label_);
+        datumFloatData->Add(objects[i].bbox_[0]);
+        datumFloatData->Add(objects[i].bbox_[1]);
+        datumFloatData->Add(objects[i].bbox_[2]);
+        datumFloatData->Add(objects[i].bbox_[3]);
+    }
+    datum->set_label(0);
+    return true;
+}
 
 int main() {
 
+    /*
     cout << "Loading Pascal VOC dataset ..." << endl;
     string p1 = "/home/amax/cxt/data/pascal_voc/";
     od::PascalVOC pascal = od::PascalVOC(p1, 0);
@@ -36,6 +74,111 @@ int main() {
     od::ODAnnotation a = pascal.getAnnotationByName("000005");
     cout << a << endl;
     cout << endl;
+    */
+
+    /*
+    vector<string> train_list = pascal.getTrainImageList();
+    cout << train_list.size() << endl;
+    map<string, od::ODAnnotation> anns = pascal.getAllAnnotations();
+
+  const bool is_color = true;
+  const bool check_size = true;
+  const bool encoded = false;
+  const string encode_type = "";
+
+  int resize_height = 256;
+  int resize_width = 256;
+
+  string save_dir = "./pascal_train_lmdb";
+
+  //if (FLAGS_shuffle) {
+    // randomly shuffle data
+    //LOG(INFO) << "Shuffling data";
+    //shuffle(lines.begin(), lines.end());
+  //}
+  //LOG(INFO) << "A total of " << lines.size() << " images.";
+
+  if (encode_type.size() && !encoded)
+    LOG(INFO) << "encode_type specified, assuming encoded=true.";
+
+  
+
+  // Create new DB
+  boost::scoped_ptr<db::DB> db(db::GetDB("lmdb"));
+  db->Open(save_dir, db::NEW);
+  boost::scoped_ptr<db::Transaction> txn(db->NewTransaction());
+
+  // Storing to db
+  std::string root_folder("./");
+  std::string img_path = p1 + "/VOCTrain/VOC2007/JPEGImages/";
+  Datum datum;
+  int count = 0;
+  int data_size = 0;
+  bool data_size_initialized = false;
+
+  //for (int line_id = 0; line_id < lines.size(); ++line_id) {
+  for (int i = 0; i < train_list.size(); i++) {
+    bool status;
+    std::string enc = encode_type;
+    //cout << train_list[i] << endl;
+    if (encoded && !enc.size()) {
+      // Guess the encoding type from the file name
+      string fn = train_list[i];
+      cout << fn << endl;
+      size_t p = fn.rfind('.');
+      if ( p == fn.npos )
+        LOG(WARNING) << "Failed to guess the encoding of '" << fn << "'";
+      enc = fn.substr(p);
+      std::transform(enc.begin(), enc.end(), enc.begin(), ::tolower);
+    }
+
+    cout << img_path + train_list[i] + '.' + enc << endl;
+    cout << resize_height << " " << resize_width << endl;
+    status = ReadImageToDatum(img_path + train_list[i] + ".jpg",
+        0, resize_height, resize_width, is_color,
+        enc, &datum);
+
+    cout << datum.channels() << " " << datum.height() << " " << datum.width() <<  " " << datum.data().size() << endl;
+    // load label to datum
+    //od::ODAnnotation an = anns[train_list[i]];
+    //status = ConvertLabelToDatum(an, &datum);
+
+    if (status == false) continue;
+    if (check_size) {
+      if (!data_size_initialized) {
+        data_size = datum.channels() * datum.height() * datum.width();
+        data_size_initialized = true;
+        cout << "size of first data: " << data_size << endl;
+      } else {
+        const std::string& data = datum.data();
+        CHECK_EQ(data.size(), data_size) << "Incorrect data field size "
+            << data.size();
+      }
+    }
+    // sequential
+    //string key_str = caffe::format_int(line_id, 8) + "_" + lines[line_id].first;
+    string key_str = train_list[i];
+
+    // Put in db
+    string out;
+    CHECK(datum.SerializeToString(&out));
+    txn->Put(key_str, out);
+
+    if (++count % 100 == 0) {
+      // Commit db
+      txn->Commit();
+      txn.reset(db->NewTransaction());
+      LOG(INFO) << "Processed " << count << " files.";
+    }
+  }
+  // write the last batch
+  if (count % 100 != 0) {
+    txn->Commit();
+    LOG(INFO) << "Processed " << count << " files.";
+  }
+  return 0;
+  */
+
 
     cout << "Loading Tiny-imagenet dataset ..." << endl;
     string p2 = "/home/amax/cxt/data/tiny-imagenet-200/";
@@ -49,10 +192,15 @@ int main() {
     cout << "Number of test images: " << imagenet.getTestImageList().size() << endl;
     cout << "Number of annotated images: " << imagenet.getAllAnnotations().size() << endl;
     cout << "Annotation of image val_6139.JPEG: " << endl;
-    a = imagenet.getAnnotationByName("val_6139.JPEG");
+    od::ODAnnotation a = imagenet.getAnnotationByName("val_6139.JPEG");
     cout << a << endl;
     cout << endl;
 
+    imagenet.convertDatasetToLmdb("val", "/media/amax/cxt/data/Detection/lmdb/imagenet/val_lmdb_256", 256, 256);
+    //imagenet.convertDatasetToLmdb("train", "./train_lmdb");
+
+
+    /*
     string p3 = "/media/amax/Seagate Backup Plus Drive/cxt/data/MSCOCO/";
     od::MSCoco coco = od::MSCoco(p3, 0);
     cout << "Dataset name: " << coco.getDatasetName() << endl;
@@ -67,6 +215,7 @@ int main() {
     a = coco.getAnnotationByName("233116");
     cout << a << endl;
     cout << endl;
+    */
 
     /*
     static const char* kTypeNames[] = 
