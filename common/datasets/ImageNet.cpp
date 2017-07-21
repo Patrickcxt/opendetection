@@ -137,8 +137,8 @@ namespace od
       input.open(ann_path.c_str());
       if (!input)
       {
-        std::cerr << "error: unable to open input file: " << ann_path << std::endl;
-        return;
+        //std::cerr << "error: unable to open input file: " << ann_path << std::endl;
+        continue;
       }
       while (getline(input, s))
       {

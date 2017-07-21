@@ -61,10 +61,10 @@ namespace od
         int id = cate[i]["id"].GetInt();
         std::string class_name = cate[i]["name"].GetString();
         //std::cout << id << " " << class_name << std::endl;
-        categories[id] = class_name; 
+        this->label2name_[id] = class_name; 
+        this->name2label_[class_name] = id;
     }
-    this->num_classes_ = cate.Size();
-    this->class_list_ = categories;
+    this->num_classes_ = this->label2name_.size();
   }
 
   void MSCoco::loadImageLists()
@@ -140,7 +140,7 @@ namespace od
       //std::cout << id << " " << image_id << " " << cate_id << " " <<  xmin << " " << ymin << " " << xmax << " " << ymax << std::endl;
 
       float bbox[] = {xmin, ymin, xmin+xd, ymin+yd};
-      ODObject obj = ODObject(this->class_list_[cate_id], "", 0, 0, bbox);
+      ODObject obj = ODObject(cate_id, "", 0, 0, bbox);
       M[image_id].push_back(obj);
     }
 
@@ -159,7 +159,7 @@ namespace od
       //std::cout << id << " " << image_id << " " << cate_id << " " <<  xmin << " " << ymin << " " << xmax << " " << ymax << std::endl;
 
       float bbox[] = {xmin, ymin, xmin+xd, ymin+yd};
-      ODObject obj = ODObject(this->class_list_[cate_id], "", 0, 0, bbox);
+      ODObject obj = ODObject(cate_id, "", 0, 0, bbox);
       M[image_id].push_back(obj);
     }
     for (std::map<int, std::vector<ODObject> >::iterator it = M.begin(); it != M.end(); it++)

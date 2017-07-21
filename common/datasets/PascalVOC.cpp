@@ -116,14 +116,14 @@ namespace od
   {
     
     //  load annotations for trainset.
-    std::vector<std::string> files = ODDataset::get_files_in_directory(this->train_annotation_path_, "jpg");
+    std::vector<std::string> files = ODDataset::get_files_in_directory(this->train_annotation_path_, "xml");
     //std::cout << files.size() << std::endl;
     for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); it++)
     {
       ODAnnotation annotation = load_single_annotation(*it);
       
       int slash_pos = (*it).rfind('/')+1;
-      int dot_pos = (*it).find('.');
+      int dot_pos = (*it).rfind('.');
       std::string prefix_name = (*it).substr(slash_pos, dot_pos-slash_pos);
       this->annotations_[prefix_name] = annotation;
     }
@@ -131,13 +131,13 @@ namespace od
 
 
     // load annotations for testset.
-    files = ODDataset::get_files_in_directory(this->test_annotation_path_, "jpg");
+    files = ODDataset::get_files_in_directory(this->test_annotation_path_, "xml");
     //std::cout << files.size() << std::endl;
     for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); it++)
     {
       ODAnnotation annotation = load_single_annotation(*it);
       int slash_pos = (*it).rfind('/')+1;
-      int dot_pos = (*it).find('.');
+      int dot_pos = (*it).rfind('.');
       std::string prefix_name = (*it).substr(slash_pos, dot_pos-slash_pos);
       this->annotations_[prefix_name] = annotation;
     }

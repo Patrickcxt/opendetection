@@ -79,6 +79,10 @@ namespace od
   {
     std::vector<std::string> files;
     bf::path p(base_path);
+    if (!bf::exists(bf::system_complete(p))) {
+      //std::cout << "Path not exists" << std::endl;
+      return files;
+    }
     bf::directory_iterator end_itr;
     for (bf::directory_iterator itr(p); itr != end_itr; ++itr)
     {
@@ -113,26 +117,17 @@ namespace od
     const bool is_color = true;
     const bool check_size = false;
     const bool encoded = false;
-    const bool is_shuffle = false;
+    const bool is_shuffle = true;
     const string encode_type = "";
 
-    /*
-    std::vector<std::string> image_list;
-    if (subset == "train")  image_list = train_image_list_;
-    else if (subset == "val") image_list = val_image_list_;
-    else if (subset == "trainval") image_list = trainval_image_list_;
-    else image_list = test_image_list_;
-    */
 
     std::map<std::string, ODAnnotation> anns =  annotations_;
 
-    /*
     if (is_shuffle) {
       // randomly shuffle data
       LOG(INFO) << "Shuffling data";
-      shuffle(lines.begin(), lines.end());
+      shuffle(image_list.begin(), image_list.end());
     }
-    */
 
     if (encode_type.size() && !encoded)
       LOG(INFO) << "encode_type specified, assuming encoded=true.";
