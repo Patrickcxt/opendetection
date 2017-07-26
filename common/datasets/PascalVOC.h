@@ -50,10 +50,10 @@ namespace od
         // Set paths.
         this->train_image_path_ = this->base_path_ + "VOCTrain/VOC2007/JPEGImages/";
         this->test_image_path_ = this->base_path_ + "VOCTest/VOC2007/JPEGImages/";
-        this->trainset_path_ = this->base_path_ + "VOCTrain/VOC2007/ImageSets/Layout/train.txt";
+        this->trainset_path_ = this->base_path_ + "VOCTrain/VOC2007/ImageSets/Main/train.txt";
         this->valset_path_ = this->base_path_ + "VOCTrain/VOC2007/ImageSets/Layout/val.txt";
-        this->trainvalset_path_ = this->base_path_ + "VOCTrain/VOC2007/ImageSets/Layout/trainval.txt";
-        this->testset_path_ = this->base_path_ + "VOCTest/VOC2007/ImageSets/Layout/test.txt";
+        this->trainvalset_path_ = this->base_path_ + "VOCTrain/VOC2007/ImageSets/Main/trainval.txt";
+        this->testset_path_ = this->base_path_ + "VOCTest/VOC2007/ImageSets/Main/test.txt";
         this->train_annotation_path_ = this->base_path_ + "VOCTrain/VOC2007/Annotations/";
         this->test_annotation_path_ = this->base_path_ + "VOCTest/VOC2007/Annotations/";
 

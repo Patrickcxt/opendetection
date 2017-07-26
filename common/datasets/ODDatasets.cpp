@@ -109,6 +109,211 @@ namespace od
     return items;
   }
 
+void convert_dataset_to_lmdb_detection(std::vector<std::string> image_list, std::string img_prefix, std::string save_dir, int resize_height, int resize_width) {
+
+  map<string, od::ODAnnotation> anns = annotations_;
+
+  const bool is_color = true;
+  const bool check_size = false;
+  const bool encoded = false;
+  const string encode_type = ".jpg";
+  const string anno_type = "detection";
+  const string backend = "lmdb";
+  AnnotatedDatum_AnnotationType type;
+  //const string label_type = "xml";
+  //const string label_map_file = "";
+  const bool check_label = false;
+  std::map<std::string, int> name_to_label = pascal.getName2Label();
+  int min_dim = 0;
+  int max_dim = 0;
+  int resize_height = 0;
+  int resize_width = 0;
+
+  std::string filename;
+  int label;
+  std::string labelname;
+
+  /*
+  if (FLAGS_shuffle) {
+    // randomly shuffle data
+    LOG(INFO) << "Shuffling data";
+    shuffle(lines.begin(), lines.end());
+  }
+  LOG(INFO) << "A total of " << lines.size() << " images.";
+  */
+
+  if (encode_type.size() && !encoded)
+    LOG(INFO) << "encode_type specified, assuming encoded=true.";
+
+
+  // Create new DB
+  scoped_ptr<db::DB> db(db::GetDB(backend));
+  db->Open(save_dir, db::NEW);
+  scoped_ptr<db::Transaction> txn(db->NewTransaction());
+
+  // Storing to db
+  AnnotatedDatum anno_datum;
+  Datum* datum = anno_datum.mutable_datum();
+  int count = 0;
+  int data_size = 0;
+  bool data_size_initialized = false;
+
+  //for (int line_id = 0; line_id < lines.size(); ++line_id) {
+  for (int id = 0; id < image_list.size(); id++) {
+    bool status = true;
+    std::string enc = encode_type;
+    cout << image_list[id] << endl;
+    if (encoded && !enc.size()) {
+      // Guess the encoding type from the file name
+      string fn = image_list[id];
+      size_t p = fn.rfind('.');
+      if ( p == fn.npos )
+        LOG(WARNING) << "Failed to guess the encoding of '" << fn << "'";
+      enc = fn.substr(p);
+      std::transform(enc.begin(), enc.end(), enc.begin(), ::tolower);
+    }
+    filename = img_prefix + image_list[id] + enc;
+    cout << filename << endl;
+    od::ODAnnotation odan = anns[image_list[id]];
+
+    if (anno_type == "classification") {
+      //label = boost::get<int>(lines[line_id].second);
+      //status = ReadImageToDatum(filename, label, resize_height, resize_width,
+          //min_dim, max_dim, is_color, enc, datum);
+    } else if (anno_type == "detection") {
+      //labelname = root_folder + boost::get<std::string>(lines[line_id].second);
+      //status = ReadRichImageToAnnotatedDatum(filename, labelname, resize_height,
+      //    resize_width, min_dim, max_dim, is_color, enc, type, label_type,
+       //   name_to_label, &anno_datum);
+      status = ReadImageToDatum(filename, -1, resize_height, resize_width,
+          min_dim, max_dim, is_color, enc, datum);
+      if (status == true) {
+        anno_datum.clear_annotation_group();
+        int ori_height, ori_width;
+        GetImageSize(filename, &ori_height, &ori_width);
+        status = read_bbox_to_annotated_datum(filename, odan, ori_height, ori_width,  &anno_datum);
+        anno_datum.set_type(AnnotatedDatum_AnnotationType_BBOX);
+      }
+    }
+    if (status == false) {
+      LOG(WARNING) << "Failed to read " << image_list[id];
+      continue;
+    }
+    if (check_size) {
+      if (!data_size_initialized) {
+        data_size = datum->channels() * datum->height() * datum->width();
+        data_size_initialized = true;
+      } else {
+        const std::string& data = datum->data();
+        CHECK_EQ(data.size(), data_size) << "Incorrect data field size "
+            << data.size();
+      }
+    }
+    // sequential
+    string key_str = caffe::format_int(id, 8) + "_" + image_list[id];
+
+    // Put in db
+    string out;
+    CHECK(anno_datum.SerializeToString(&out));
+    txn->Put(key_str, out);
+
+    if (++count % 1000 == 0) {
+      // Commit db
+      txn->Commit();
+      txn.reset(db->NewTransaction());
+      LOG(INFO) << "Processed " << count << " files.";
+    }
+  }
+  // write the last batch
+  
+  if (count % 1000 != 0) {
+    txn->Commit();
+    LOG(INFO) << "Processed " << count << " files.";
+  }
+  return 0;
+}
+
+
+bool ReadBBoxToAnnotatedDatum(const string filename, od::ODAnnotation annotation, const int img_height, const int img_width,  AnnotatedDatum* anno_datum) {
+
+  int height = annotation.height_;
+  int width = annotation.width_;
+  LOG_IF(WARNING, height != img_height) << filename <<  " inconsistent image height.";
+  LOG_IF(WARNING, width != img_width) << filename <<  " inconsistent image width.";
+  CHECK(width != 0 && height != 0) << filename << " no valid image width/height.";
+  int instance_id = 0;
+  vector<od::ODObject> objects = annotation.objects_;
+  for (vector<od::ODObject>::iterator it = objects.begin(); it != objects.end(); it++) {
+    Annotation* anno = NULL;
+    bool difficult = false;
+    od::ODObject object = *it;
+
+    /* find corresponding category group */
+    int label = object.label_;
+    bool found_group = false;
+    for (int g = 0; g < anno_datum->annotation_group_size(); ++g) {
+      AnnotationGroup* anno_group = anno_datum->mutable_annotation_group(g);
+      if (label == anno_group->group_label()) {
+        if (anno_group->annotation_size() == 0) {
+          instance_id = 0;
+        } else {
+          instance_id = anno_group->annotation(
+              anno_group->annotation_size() - 1).instance_id() + 1;
+        }
+        anno = anno_group->add_annotation();
+        found_group = true;
+      }
+    }
+    if (!found_group) {
+      // If there is no such annotation_group, create a new one.
+      AnnotationGroup* anno_group = anno_datum->add_annotation_group();
+      anno_group->set_group_label(label);
+      anno = anno_group->add_annotation();
+      instance_id = 0;
+    }
+
+    anno->set_instance_id(instance_id++); 
+    /*  difficult */
+    difficult = object.is_difficult_;
+
+    /* bounding box */
+    int xmin = object.bbox_[0];
+    int ymin = object.bbox_[1];
+    int xmax = object.bbox_[2];
+    int ymax = object.bbox_[3];
+    CHECK_NOTNULL(anno);
+    LOG_IF(WARNING, xmin > width) << filename <<
+          " bounding box exceeds image boundary.";
+    LOG_IF(WARNING, ymin > height) << filename <<
+          " bounding box exceeds image boundary.";
+    LOG_IF(WARNING, xmax > width) << filename <<
+          " bounding box exceeds image boundary.";
+    LOG_IF(WARNING, ymax > height) << filename <<
+          " bounding box exceeds image boundary.";
+    LOG_IF(WARNING, xmin < 0) << filename <<
+          " bounding box exceeds image boundary.";
+    LOG_IF(WARNING, ymin < 0) << filename <<
+          " bounding box exceeds image boundary.";
+    LOG_IF(WARNING, xmax < 0) << filename <<
+          " bounding box exceeds image boundary.";
+    LOG_IF(WARNING, ymax < 0) << filename <<
+          " bounding box exceeds image boundary.";
+    LOG_IF(WARNING, xmin > xmax) << filename <<
+          " bounding box irregular.";
+    LOG_IF(WARNING, ymin > ymax) << filename <<
+          " bounding box irregular.";
+      // Store the normalized bounding box.
+    NormalizedBBox* bbox = anno->mutable_bbox();
+    bbox->set_xmin(static_cast<float>(xmin) / width);
+    bbox->set_ymin(static_cast<float>(ymin) / height);
+    bbox->set_xmax(static_cast<float>(xmax) / width);
+    bbox->set_ymax(static_cast<float>(ymax) / height);
+    bbox->set_difficult(difficult);
+  }
+  return true;
+}
+
+
   /**
    * This code is modified form convert_imageset.cpp of caffe.
    */

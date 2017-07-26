@@ -182,7 +182,7 @@ namespace od
       
       }
       
-      ODAnnotation annotation = ODAnnotation(objects);
+      ODAnnotation annotation = ODAnnotation(height, width, objects);
       return annotation;
   
   }

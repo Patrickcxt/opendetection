@@ -129,7 +129,6 @@ int main() {
     cout << endl;
     */
 
-    /*
   const bool is_color = true;
   const bool check_size = false;
   const bool encoded = false;
@@ -224,7 +223,6 @@ int main() {
     LOG(INFO) << "Processed " << count << " files.";
   }
   return 0;
-  */
 
 
 

@@ -82,15 +82,19 @@ namespace od
    */
   struct ODAnnotation
   {
+      int height_;
+      int width_;
       std::vector<ODObject> objects_;  // Object list that a image contains.
 
       ODAnnotation() {}
-      ODAnnotation(std::vector<ODObject> objects): objects_(objects) {}
+      ODAnnotation(int height, int width, std::vector<ODObject> objects): 
+          height_(height), width_(width), objects_(objects) {}
 
       friend std::ostream& operator <<(std::ostream& out, const ODAnnotation& annotation)
       {
         std::vector<ODObject> objects = annotation.objects_;
         out << "---------------------------------------------------------------------------" << std::endl;
+        out << "Height: " << annotation.height_ << "  Width: " << annotation.width_ << endl;
         out << objects.size() << " objects contained: " << std::endl;
         for (int i = 0; i < objects.size(); i++)
         {
@@ -150,10 +154,15 @@ namespace od
     }
 
 
-    std::map<int, std::string> getClassesList() const  // return the classes list of the dataset
+    std::map<int, std::string> getClassesList() const  // return the classes list of the dataset, label to category name
     {
       //return class_list_; 
       return label2name_;
+    }
+
+    std::map<std::string, int> getName2Label() const  // return mapping of category name to label
+    {
+      return name2label_; 
     }
 
     std::vector<std::string> getTrainImageList() const
@@ -190,6 +199,7 @@ namespace od
 
     virtual void convertDatasetToLmdb(std::string subset, std::string save_dir, int resize_height, int resize_width) {}  // convert dataset to lmdb format for caffe input.
 
+
     virtual void evaluate() {}
 
     virtual ~ODDataset() {}
@@ -215,10 +225,17 @@ namespace od
     std::map<std::string, ODAnnotation> annotations_;    // annotations for each images, ODAnnotation class/structure to be implemented later.
 
 
-
     std::vector<std::string> get_files_in_directory(std::string base_path, bool is_folder, std::string ext="");
+
     std::vector<std::string> split(std::string str, char sep);
+
+    // convert dataset to lmdb for classification
     void convert_dataset_to_lmdb(std::vector<std::string> image_list, std::string img_prefix, std::string save_dir, int resize_height, int resize_width);
+
+    // convert dataset to lmdb for detection, classification and detection will be merged later.
+    void convert_dataset_to_lmdb_detection(std::vector<std::string> image_list, std::string img_prefix, std::string save_dir, int resize_height, int resize_width);
+
+    void read_bbox_to_annotated_datum(const string filename, od::ODAnnotation annotation, const int img_height, const int img_width, AnnotatedDatum* anno_datum);
 
   private:
 
