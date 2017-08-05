@@ -62,8 +62,8 @@ bool ConvertLabelToDatum(od::ODAnnotation an, Datum* datum) {
 int main() {
 
     cout << "Loading Pascal VOC dataset ..." << endl;
-    //string p1 = "/home/amax/cxt/data/pascal_voc/";
-    string p1 = "../data/pascal_voc/";
+    string p1 = "/home/amax/cxt/data/pascal_voc/";
+    //string p1 = "../data/pascal_voc/";
     od::PascalVOC pascal = od::PascalVOC(p1, 0);
     cout << "Dataset name: " << pascal.getDatasetName() << endl;
     cout << "Number of categories: " << pascal.getNumOfClasses() << endl;
@@ -77,12 +77,14 @@ int main() {
     od::ODAnnotation a1 = pascal.getAnnotationByName("000005");
     cout << a1 << endl;
     cout << endl;
-    /*
-    vector<string> train_list = pascal.getTrainImageList();
-    cout << train_list.size() << endl;
-    map<string, od::ODAnnotation> anns = pascal.getAllAnnotations();
-    */
 
+    vector<string> train_list = pascal.getTrainImageList();
+    map<string, od::ODAnnotation> anns = pascal.getAllAnnotations();
+
+    pascal.convertDatasetToLmdb("train", "./pascal_train");
+
+
+    /*
     cout << "Loading Tiny-imagenet dataset ..." << endl;
     //string p2 = "/home/amax/cxt/data/tiny-imagenet-200/";
     string p2 = "../data/tiny-imagenet-200/";
@@ -98,6 +100,7 @@ int main() {
     cout << "Annotation of image val_0.JPEG: " << endl;
     od::ODAnnotation a2 = imagenet.getAnnotationByName("val_0.JPEG");
     cout << a2 << endl;
+    */
     
     /*
     map<int, string> cates = imagenet.getClassesList();
@@ -129,6 +132,7 @@ int main() {
     cout << endl;
     */
 
+    /*
   const bool is_color = true;
   const bool check_size = false;
   const bool encoded = false;
@@ -222,9 +226,7 @@ int main() {
     txn->Commit();
     LOG(INFO) << "Processed " << count << " files.";
   }
-  return 0;
-
-
+  */
 
     /*
     static const char* kTypeNames[] = 

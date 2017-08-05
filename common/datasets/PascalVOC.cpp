@@ -146,6 +146,34 @@ namespace od
 
   void PascalVOC::evaluation() {}
 
+  void convertDatasetToLmdb(std::string subset, std::string save_dir, int reisze_height = 0, int resize_width = 0)
+  {
+    std::cout << "Start converting pascal dataset to lmdb ..." << std::endl;
+    std::vector<std::string> image_list;
+    std::string image_prefix;
+    if (subset == "train")
+    {
+      image_list = this->train_image_list_;
+      image_prefix = this->train_image_path_;
+    }
+    else if (subset == "val")
+    {
+      image_list = this->val_image_list_;
+      image_prefix = this->train_image_path_;
+    }
+    else if (subset == "trainval")
+    {
+      image_list = this->trainval_image_list_;
+      image_prefix = this->train_image_path_;
+    }
+    else {
+      image_list = this->test_image_list_;
+      image_prefix = this->test_image_path_;
+    }
+    convert_dataset_to_lmdb(image_list, image_prefix, save_dir, resize_height, resize_width);
+    std::cout << "Convert finished!" << std::endl;
+  }
+
   ODAnnotation PascalVOC::load_single_annotation(std::string xml_file)
   {
       rx::file<> fdoc(xml_file.c_str());

@@ -45,13 +45,13 @@ namespace od
   {
   public:
     PascalVOC(std::string base_path_, int task_type_) : 
-        ODDataset("pascal_voc_2007", base_path_, task_type_) 
+        ODDataset("pascal_voc", base_path_, task_type_) 
     {
         // Set paths.
         this->train_image_path_ = this->base_path_ + "VOCTrain/VOC2007/JPEGImages/";
         this->test_image_path_ = this->base_path_ + "VOCTest/VOC2007/JPEGImages/";
         this->trainset_path_ = this->base_path_ + "VOCTrain/VOC2007/ImageSets/Main/train.txt";
-        this->valset_path_ = this->base_path_ + "VOCTrain/VOC2007/ImageSets/Layout/val.txt";
+        this->valset_path_ = this->base_path_ + "VOCTrain/VOC2007/ImageSets/Main/val.txt";
         this->trainvalset_path_ = this->base_path_ + "VOCTrain/VOC2007/ImageSets/Main/trainval.txt";
         this->testset_path_ = this->base_path_ + "VOCTest/VOC2007/ImageSets/Main/test.txt";
         this->train_annotation_path_ = this->base_path_ + "VOCTrain/VOC2007/Annotations/";
@@ -68,6 +68,8 @@ namespace od
 
 
     void evaluation();
+
+    void convertDatasetToLmdb(std::string subset, std::string save_dir, int resize_height, int resize_width);
 
     ~PascalVOC() {}
 

@@ -208,7 +208,7 @@ namespace od
 
     std::string name_;  // Name of the dataset
     std::string base_path_;  // root path for a specific dataset, e.g. /path/to/coco/
-    int task_type_;      // Task to perfom.  Classification or Detection etc.
+    int task_type_;      // Task to perfom.  Classification (0) or Detection (1) etc.
     int num_classes_;    // Number of the categories
     int iter_;           // cursor that points to current batch. 
 
@@ -230,7 +230,7 @@ namespace od
     std::vector<std::string> split(std::string str, char sep);
 
     // convert dataset to lmdb for classification
-    void convert_dataset_to_lmdb(std::vector<std::string> image_list, std::string img_prefix, std::string save_dir, int resize_height, int resize_width);
+    //void convert_dataset_to_lmdb(std::vector<std::string> image_list, std::string img_prefix, std::string save_dir, int resize_height, int resize_width);
 
     // convert dataset to lmdb for detection, classification and detection will be merged later.
     void convert_dataset_to_lmdb_detection(std::vector<std::string> image_list, std::string img_prefix, std::string save_dir, int resize_height, int resize_width);
