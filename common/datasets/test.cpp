@@ -64,7 +64,7 @@ int main() {
     cout << "Loading Pascal VOC dataset ..." << endl;
     string p1 = "/home/amax/cxt/data/pascal_voc/";
     //string p1 = "../data/pascal_voc/";
-    od::PascalVOC pascal = od::PascalVOC(p1, 0);
+    od::PascalVOC pascal = od::PascalVOC(p1, 1);
     cout << "Dataset name: " << pascal.getDatasetName() << endl;
     cout << "Number of categories: " << pascal.getNumOfClasses() << endl;
     cout << "Number of classlist: " << pascal.getClassesList().size() << endl;
@@ -81,7 +81,7 @@ int main() {
     vector<string> train_list = pascal.getTrainImageList();
     map<string, od::ODAnnotation> anns = pascal.getAllAnnotations();
 
-    pascal.convertDatasetToLmdb("train", "./pascal_train");
+    pascal.convertDatasetToLmdb("test", "/media/amax/cxt/data/Detection/lmdb/pascal_test");
 
 
     /*

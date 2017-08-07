@@ -35,6 +35,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 #include <map>
 
+#include <boost/filesystem.hpp>
+#include "boost/scoped_ptr.hpp"
+#include "gflags/gflags.h"
+#include "glog/logging.h"
+#include "caffe/proto/caffe.pb.h"
+#include "caffe/util/db.hpp"
+#include "caffe/util/format.hpp"
+#include "caffe/util/io.hpp"
+#include "caffe/util/rng.hpp"
+
+using namespace caffe;
+using std::pair;
+
 namespace od
 {
 
@@ -94,7 +107,7 @@ namespace od
       {
         std::vector<ODObject> objects = annotation.objects_;
         out << "---------------------------------------------------------------------------" << std::endl;
-        out << "Height: " << annotation.height_ << "  Width: " << annotation.width_ << endl;
+        out << "Height: " << annotation.height_ << "  Width: " << annotation.width_ << std::endl;
         out << objects.size() << " objects contained: " << std::endl;
         for (int i = 0; i < objects.size(); i++)
         {
@@ -235,7 +248,7 @@ namespace od
     // convert dataset to lmdb for detection, classification and detection will be merged later.
     void convert_dataset_to_lmdb_detection(std::vector<std::string> image_list, std::string img_prefix, std::string save_dir, int resize_height, int resize_width);
 
-    void read_bbox_to_annotated_datum(const string filename, od::ODAnnotation annotation, const int img_height, const int img_width, AnnotatedDatum* anno_datum);
+    bool read_bbox_to_annotated_datum(const std::string filename, od::ODAnnotation annotation, const int img_height, const int img_width, AnnotatedDatum* anno_datum);
 
   private:
 

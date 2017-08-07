@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <algorithm>
 #include <utility>
 
+/*
 #include <boost/filesystem.hpp>
 #include "boost/scoped_ptr.hpp"
 #include "gflags/gflags.h"
@@ -42,10 +43,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "caffe/util/format.hpp"
 #include "caffe/util/io.hpp"
 #include "caffe/util/rng.hpp"
+*/
 
 using namespace caffe;
 using std::pair;
-//using boost::scoped_str;
+using boost::scoped_ptr;
 
 namespace bf = boost::filesystem;
 
@@ -113,20 +115,19 @@ namespace od
   /**
    * This function is modified from "caffe(ssd)/tools/convert_annoset.cpp"
    */
-  void convert_dataset_to_lmdb_detection(std::vector<std::string> image_list, std::string img_prefix,
+  void ODDataset::convert_dataset_to_lmdb_detection(std::vector<std::string> image_list, std::string img_prefix,
       std::string save_dir, int resize_height, int resize_width) {
 
-    map<string, od::ODAnnotation> anns = annotations_;
+    std::map<std::string, ODAnnotation> anns = annotations_;
 
     const bool is_color = true;
     const bool check_size = false;
     const bool encoded = false;
-    const string encode_type = ".jpg";
-    const string anno_type = (task_type_ == 0) ? "classification" : "detection";
-    const string backend = "lmdb";
+    const std::string encode_type = ".jpg";
+    const std::string anno_type = (task_type_ == 0) ? "classification" : "detection";
+    const std::string backend = "lmdb";
     AnnotatedDatum_AnnotationType type;
     const bool check_label = false;
-    std::map<std::string, int> name_to_label = pascal.getName2Label();
     int min_dim = 0;
     int max_dim = 0;
 
@@ -162,10 +163,10 @@ namespace od
     for (int id = 0; id < image_list.size(); id++) {
       bool status = true;
       std::string enc = encode_type;
-      cout << image_list[id] << endl;
+      std::cout << image_list[id] << std::endl;
       if (encoded && !enc.size()) {
         // Guess the encoding type from the file name
-        string fn = image_list[id];
+        std::string fn = image_list[id];
         size_t p = fn.rfind('.');
         if ( p == fn.npos )
           LOG(WARNING) << "Failed to guess the encoding of '" << fn << "'";
@@ -173,7 +174,7 @@ namespace od
         std::transform(enc.begin(), enc.end(), enc.begin(), ::tolower);
       }
       filename = img_prefix + image_list[id] + enc;
-      cout << filename << endl;
+      std::cout << filename << std::endl;
       od::ODAnnotation odan = anns[image_list[id]];
 
       if (anno_type == "classification") {
@@ -187,7 +188,7 @@ namespace od
             min_dim, max_dim, is_color, enc, datum);
       } else if (anno_type == "detection") {
         status = ReadImageToDatum(filename, -1, resize_height, resize_width,
-            min_dim, max_dim, is_color, enc, datum);
+            min_dim, max_dim, is_color, "", datum);
         if (status == true) {
           anno_datum.clear_annotation_group();
           int ori_height, ori_width;
@@ -200,6 +201,8 @@ namespace od
         LOG(WARNING) << "Failed to read " << image_list[id];
         continue;
       }
+      std::cout << datum->channels() << " " << datum->height() << " " << datum->width() << std::endl;
+      std::cout << (datum->data()).size() << std::endl;
       if (check_size) {
         if (!data_size_initialized) {
           data_size = datum->channels() * datum->height() * datum->width();
@@ -211,10 +214,10 @@ namespace od
         }
       }
       // sequential
-      string key_str = caffe::format_int(id, 8) + "_" + image_list[id];
+      std::string key_str = caffe::format_int(id, 8) + "_" + image_list[id];
 
       // Put in db
-      string out;
+      std::string out;
       CHECK(anno_datum.SerializeToString(&out));
       txn->Put(key_str, out);
 
@@ -231,13 +234,12 @@ namespace od
       txn->Commit();
       LOG(INFO) << "Processed " << count << " files.";
     }
-    return 0;
   }
 
   /**
    * This function is modified from "caffe(ssd)/util/io.cpp/ReadXMLFromAnnotatedDatum
    */
-  bool read_bbox_to_annotated_datum(const string filename, od::ODAnnotation annotation, const int img_height, const int img_width,  AnnotatedDatum* anno_datum) {
+  bool ODDataset::read_bbox_to_annotated_datum(const std::string filename, od::ODAnnotation annotation, const int img_height, const int img_width,  AnnotatedDatum* anno_datum) {
 
     int height = annotation.height_;
     int width = annotation.width_;

@@ -115,7 +115,7 @@ namespace od
   void PascalVOC::loadAnnotations()
   {
     
-    //  load annotations for trainset.
+    //  load annotations for trainval set.
     std::vector<std::string> files = ODDataset::get_files_in_directory(this->train_annotation_path_, "xml");
     //std::cout << files.size() << std::endl;
     for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); it++)
@@ -146,7 +146,7 @@ namespace od
 
   void PascalVOC::evaluation() {}
 
-  void convertDatasetToLmdb(std::string subset, std::string save_dir, int reisze_height = 0, int resize_width = 0)
+  void PascalVOC::convertDatasetToLmdb(std::string subset, std::string save_dir, int resize_height, int resize_width)
   {
     std::cout << "Start converting pascal dataset to lmdb ..." << std::endl;
     std::vector<std::string> image_list;
@@ -170,7 +170,7 @@ namespace od
       image_list = this->test_image_list_;
       image_prefix = this->test_image_path_;
     }
-    convert_dataset_to_lmdb(image_list, image_prefix, save_dir, resize_height, resize_width);
+    convert_dataset_to_lmdb_detection(image_list, image_prefix, save_dir, resize_height, resize_width);
     std::cout << "Convert finished!" << std::endl;
   }
 

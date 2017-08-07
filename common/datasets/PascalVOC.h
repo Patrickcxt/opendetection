@@ -69,7 +69,7 @@ namespace od
 
     void evaluation();
 
-    void convertDatasetToLmdb(std::string subset, std::string save_dir, int resize_height, int resize_width);
+    void convertDatasetToLmdb(std::string subset, std::string save_dir, int resize_height=0, int resize_width=0);
 
     ~PascalVOC() {}
 
