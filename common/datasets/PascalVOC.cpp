@@ -23,11 +23,10 @@ namespace od
 
   void PascalVOC::loadClassList()
   {
-    std::string categories[] = {"aeroplane", "bicycle", "bird", "boat", "bottle",
+    std::string categories[] = {"background", "aeroplane", "bicycle", "bird", "boat", "bottle",
                            "bus", "car", "cat", "chair", "cow", 
                            "diningtable", "dog", "horse", "motorbike", "person", 
-                           "pottedplant", "sheep", "sofa", "train", "tvmonitor",
-                           "background"};
+                           "pottedplant", "sheep", "sofa", "train", "tvmonitor"};
     this->num_classes_ = 21;  // hard code;
     for (int i = 0; i < this->num_classes_; i++)
     {
@@ -170,7 +169,7 @@ namespace od
       image_list = this->test_image_list_;
       image_prefix = this->test_image_path_;
     }
-    convert_dataset_to_lmdb_detection(image_list, image_prefix, save_dir, resize_height, resize_width);
+    convert_dataset_to_lmdb_detection(image_list, image_prefix, save_dir, resize_height, resize_width, ".jpg");
     std::cout << "Convert finished!" << std::endl;
   }
 

@@ -39,25 +39,6 @@ using namespace boost::filesystem;
 using namespace std;
 using namespace caffe;
 
-bool ConvertLabelToDatum(od::ODAnnotation an, Datum* datum) {
-    vector<od::ODObject> objects = an.objects_;
-    //datum->set_width(5*objects.size());
-    cout << objects.size() << " " << endl;
-    //datum->set_height(1);
-    //datum->set_channels(1);
-    datum->clear_float_data();
-    google::protobuf::RepeatedField<float>* datumFloatData = datum->mutable_float_data();
-    for (int i = 0; i < objects.size(); i++) {
-        datumFloatData->Add(objects[i].label_);
-        datumFloatData->Add(objects[i].bbox_[0]);
-        datumFloatData->Add(objects[i].bbox_[1]);
-        datumFloatData->Add(objects[i].bbox_[2]);
-        datumFloatData->Add(objects[i].bbox_[3]);
-    }
-    cout << datumFloatData->size() << endl;
-    datum->set_label(0);
-    return true;
-}
 
 int main() {
 
@@ -71,27 +52,25 @@ int main() {
     cout << "Number of training images: " << pascal.getTrainImageList().size() << endl;
     cout << "Number of validation images: " << pascal.getValImageList().size() << endl;
     cout << "Number of trainging and validation images: " << pascal.getTrainvalImageList().size() << endl;
-    cout << "Number of test images: " << pascal.getTestImageList().size() << endl;
-    cout << "Number of annotated images: " << pascal.getAllAnnotations().size() << endl;
+    cout << "Number of test images: " << pascal.getTestImageList().size() << endl; 
+    cout << "Number of annotated images: " << pascal.getAllAnnotations().size() << endl; 
     cout << "Annotation of image 000005.jpg: " << endl;
     od::ODAnnotation a1 = pascal.getAnnotationByName("000005");
     cout << a1 << endl;
     cout << endl;
 
-    vector<string> train_list = pascal.getTrainImageList();
-    map<string, od::ODAnnotation> anns = pascal.getAllAnnotations();
-
-    pascal.convertDatasetToLmdb("test", "/media/amax/cxt/data/Detection/lmdb/pascal_test");
+    // convert dataset to lmdb.
+    pascal.convertDatasetToLmdb("trainval", "/media/amax/cxt/data/Detection/lmdb/pascal/pascal_trainval_enc");
+    pascal.convertDatasetToLmdb("test", "/media/amax/cxt/data/Detection/lmdb/pascal/pascal_test_enc");
 
 
     /*
     cout << "Loading Tiny-imagenet dataset ..." << endl;
-    //string p2 = "/home/amax/cxt/data/tiny-imagenet-200/";
-    string p2 = "../data/tiny-imagenet-200/";
+    string p2 = "/home/amax/cxt/data/tiny-imagenet-200/";
+    //string p2 = "../data/tiny-imagenet-200/";
     od::ImageNet imagenet = od::ImageNet(p2, 0);
     cout << "Dataset name: " << imagenet.getDatasetName() << endl;
-    cout << "Number of categories: " << imagenet.getNumOfClasses() << endl;
-    cout << "Number of classlist: " << imagenet.getClassesList().size() << endl;
+    cout << "Number of categories: " << imagenet.getNumOfClasses() << endl; cout << "Number of classlist: " << imagenet.getClassesList().size() << endl;
     cout << "Number of training images: " << imagenet.getTrainImageList().size() << endl;
     cout << "Number of validation images: " << imagenet.getValImageList().size() << endl;
     cout << "Number of trainging and validation images: " << imagenet.getTrainvalImageList().size() << endl;
@@ -100,16 +79,14 @@ int main() {
     cout << "Annotation of image val_0.JPEG: " << endl;
     od::ODAnnotation a2 = imagenet.getAnnotationByName("val_0.JPEG");
     cout << a2 << endl;
-    */
     
-    /*
     map<int, string> cates = imagenet.getClassesList();
     for (map<int, string>::iterator it = cates.begin(); it != cates.end(); it++)
         cout << it->first << " "  << it->second << endl;
     cout << endl;
 
-    imagenet.convertDatasetToLmdb("train", "/media/amax/cxt/data/Detection/lmdb/imagenet/train_lmdb_256_shuffled", 256, 256);
-    imagenet.convertDatasetToLmdb("train", "./train_lmdb");
+    imagenet.convertDatasetToLmdb("train", "/media/amax/cxt/data/Detection/lmdb/imagenet/train_lmdb");
+    //imagenet.convertDatasetToLmdb("train", "./train_lmdb");
     */
 
 

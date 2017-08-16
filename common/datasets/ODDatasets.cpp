@@ -77,7 +77,7 @@ namespace od
     return batch;
   }
 
-  std::vector<std::string> ODDataset::get_files_in_directory(std::string base_path, bool is_folder, std::string ext)
+  std::vector<std::string> ODDataset::get_files_in_directory(std::string base_path, bool is_folder, std::string ext, bool is_truncated)
   {
     std::vector<std::string> files;
     bf::path p(base_path);
@@ -89,9 +89,24 @@ namespace od
     for (bf::directory_iterator itr(p); itr != end_itr; ++itr)
     {
       if (!is_folder && bf::is_regular_file(itr->path()))
-        files.push_back(itr->path().string());
+      {
+        if (is_truncated)
+        {
+          std::string path = itr->path().string();
+          std::size_t pos = path.rfind("/");
+          if (pos != std::string::npos)
+              path = path.substr(pos+1);
+          files.push_back(path);
+        }
+        else
+        {
+          files.push_back(itr->path().string());
+        }
+      }
       else
+      {
         files.push_back(itr->path().string());
+      }
     }
     return files;
   }
@@ -116,14 +131,13 @@ namespace od
    * This function is modified from "caffe(ssd)/tools/convert_annoset.cpp"
    */
   void ODDataset::convert_dataset_to_lmdb_detection(std::vector<std::string> image_list, std::string img_prefix,
-      std::string save_dir, int resize_height, int resize_width) {
+      std::string save_dir, int resize_height, int resize_width, std::string encode_type) {
 
     std::map<std::string, ODAnnotation> anns = annotations_;
 
     const bool is_color = true;
     const bool check_size = false;
     const bool encoded = false;
-    const std::string encode_type = ".jpg";
     const std::string anno_type = (task_type_ == 0) ? "classification" : "detection";
     const std::string backend = "lmdb";
     AnnotatedDatum_AnnotationType type;
@@ -133,7 +147,6 @@ namespace od
 
     std::string filename;
     int label;
-    std::string labelname;
 
     /*
     if (FLAGS_shuffle) {
@@ -188,7 +201,7 @@ namespace od
             min_dim, max_dim, is_color, enc, datum);
       } else if (anno_type == "detection") {
         status = ReadImageToDatum(filename, -1, resize_height, resize_width,
-            min_dim, max_dim, is_color, "", datum);
+            min_dim, max_dim, is_color, enc, datum);
         if (status == true) {
           anno_datum.clear_annotation_group();
           int ori_height, ori_width;

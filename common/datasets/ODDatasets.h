@@ -238,7 +238,7 @@ namespace od
     std::map<std::string, ODAnnotation> annotations_;    // annotations for each images, ODAnnotation class/structure to be implemented later.
 
 
-    std::vector<std::string> get_files_in_directory(std::string base_path, bool is_folder, std::string ext="");
+    std::vector<std::string> get_files_in_directory(std::string base_path, bool is_folder, std::string ext="", bool is_truncated = false);
 
     std::vector<std::string> split(std::string str, char sep);
 
@@ -246,7 +246,7 @@ namespace od
     //void convert_dataset_to_lmdb(std::vector<std::string> image_list, std::string img_prefix, std::string save_dir, int resize_height, int resize_width);
 
     // convert dataset to lmdb for detection, classification and detection will be merged later.
-    void convert_dataset_to_lmdb_detection(std::vector<std::string> image_list, std::string img_prefix, std::string save_dir, int resize_height, int resize_width);
+    void convert_dataset_to_lmdb_detection(std::vector<std::string> image_list, std::string img_prefix, std::string save_dir, int resize_height, int resize_width, std::string encode_type);
 
     bool read_bbox_to_annotated_datum(const std::string filename, od::ODAnnotation annotation, const int img_height, const int img_width, AnnotatedDatum* anno_datum);
 

@@ -13,22 +13,21 @@ namespace od
 {
   void ImageNet::convertDatasetToLmdb(std::string subset, std::string save_dir, int resize_height, int resize_width)
   {
+     std::cout << "Start converting ImageNet dataset to lmdb ... " << std::endl;
      std::vector<std::string> image_list;
      std::string img_prefix = "";
      if (subset == "train")
      {
-       /*
-       for (int i = 0; i < train_image_list_.size(); i++)
-       {
-         std::cout << train_image_list_[i] << std::endl;
-       }
        img_prefix = this->base_path_ + "train/";
-       */
        image_list = this->train_image_list_;
      }
      else if (subset == "val")
      {
-       //img_prefix =  this->base_path_ + "val/images/";
+       for (int i = 0; i < val_image_list_.size(); i++)
+       {
+         std::cout << val_image_list_[i] << std::endl;
+       }
+       img_prefix =  this->base_path_ + "val/images/";
        image_list = this->val_image_list_;
      }
      else if (subset == "trainval")
@@ -37,10 +36,16 @@ namespace od
      }
      else
      {
-       //img_prefix = this->base_path_ + "test/images/";
+       for (int i = 0; i < test_image_list_.size(); i++)
+       {
+         std::cout << test_image_list_[i] << std::endl;
+       }
+       img_prefix = this->base_path_ + "test/images/";
        image_list = this->test_image_list_;
      }
-     convert_dataset_to_lmdb(image_list, img_prefix, save_dir, resize_height, resize_width);
+     convert_dataset_to_lmdb_detection(image_list, img_prefix, save_dir, resize_height, resize_width, "");
+     std::cout << "Convert finished!" << std::endl;
+    
   }
 
   void ImageNet::loadClassList()
@@ -99,11 +104,20 @@ namespace od
     {
       std::string wnid = it->second;
       std::vector<std::string> files = get_files_in_directory(this->trainset_path_+wnid+"/images/", "JPEG");
+      for (int i = 0; i < files.size(); i++)
+      {
+         std::string f = files[i] ;
+         std::vector<std::string> items = split(f, '/');
+         int num = items.size();
+         f = items[num-3] + "/" + items[num-2] + "/" + items[num-1];
+         files[i] = f;
+         //std::cout << files[i] << std::endl;
+      }
       train_image_list.insert(train_image_list.end(), files.begin(), files.end());
     }
     
-    val_image_list = get_files_in_directory(this->valset_path_+"images/", false, "JPEG");
-    test_image_list = get_files_in_directory(this->testset_path_+"images/", false, "JPEG");
+    val_image_list = get_files_in_directory(this->valset_path_+"images/", false, "JPEG", true);
+    test_image_list = get_files_in_directory(this->testset_path_+"images/", false, "JPEG", true);
     trainval_image_list = train_image_list;
     trainval_image_list.insert(trainval_image_list.end(), val_image_list.begin(), val_image_list.end());
 
@@ -195,7 +209,7 @@ namespace od
     // Construct anntations
     for (std::map<std::string, std::vector<ODObject> >::iterator it = M.begin(); it != M.end(); it++)
     {
-      ODAnnotation ann = ODAnnotation(it->second); 
+      ODAnnotation ann = ODAnnotation(64, 64, it->second); 
       annotations[it->first] = ann;
     }
 
