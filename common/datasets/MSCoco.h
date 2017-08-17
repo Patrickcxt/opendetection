@@ -72,6 +72,8 @@ namespace od
 
     void evaluation();
 
+    void convertDatasetToLmdb(std::string subset, std::string save_dir, int resize_height=0, int resize_width=0);
+
     ~MSCoco() {}
 
   private:
@@ -87,6 +89,9 @@ namespace od
     rj::Document* train_doc_;        // training dataset
     rj::Document* val_doc_;          // validation dataset
     rj::Document* test_doc_;  // not provided
+
+    std::map<std::string, int> height_;  // temporal container to store image height and width.
+    std::map<std::string, int> width_;
 
     void loadJsonDataset();
 

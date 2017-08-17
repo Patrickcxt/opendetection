@@ -161,7 +161,8 @@ namespace od
         //std::cout << s << std::endl;
         std::vector<std::string> items = split(s, '\t');
         
-        std::string image_name = items[0];
+        std::string image_name = wnid + "/images/" + items[0];
+        std::cout << image_name << std::endl;
         float xmin = atof(items[1].c_str());
         float ymin = atof(items[2].c_str());
         float xmax = atof(items[3].c_str());

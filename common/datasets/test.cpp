@@ -42,6 +42,7 @@ using namespace caffe;
 
 int main() {
 
+    /*
     cout << "Loading Pascal VOC dataset ..." << endl;
     string p1 = "/home/amax/cxt/data/pascal_voc/";
     //string p1 = "../data/pascal_voc/";
@@ -62,13 +63,14 @@ int main() {
     // convert dataset to lmdb.
     pascal.convertDatasetToLmdb("trainval", "/media/amax/cxt/data/Detection/lmdb/pascal/pascal_trainval_enc");
     pascal.convertDatasetToLmdb("test", "/media/amax/cxt/data/Detection/lmdb/pascal/pascal_test_enc");
+    */
 
 
     /*
     cout << "Loading Tiny-imagenet dataset ..." << endl;
     string p2 = "/home/amax/cxt/data/tiny-imagenet-200/";
     //string p2 = "../data/tiny-imagenet-200/";
-    od::ImageNet imagenet = od::ImageNet(p2, 0);
+    od::ImageNet imagenet = od::ImageNet(p2, 1);  // 0 for classification, 1 for detection
     cout << "Dataset name: " << imagenet.getDatasetName() << endl;
     cout << "Number of categories: " << imagenet.getNumOfClasses() << endl; cout << "Number of classlist: " << imagenet.getClassesList().size() << endl;
     cout << "Number of training images: " << imagenet.getTrainImageList().size() << endl;
@@ -85,16 +87,15 @@ int main() {
         cout << it->first << " "  << it->second << endl;
     cout << endl;
 
-    imagenet.convertDatasetToLmdb("train", "/media/amax/cxt/data/Detection/lmdb/imagenet/train_lmdb");
-    //imagenet.convertDatasetToLmdb("train", "./train_lmdb");
+    imagenet.convertDatasetToLmdb("train", "/media/amax/cxt/data/Detection/lmdb/imagenet/train_lmdb_dec");
+    imagenet.convertDatasetToLmdb("val", "/media/amax/cxt/data/Detection/lmdb/imagenet/val_lmdb_dec");
     */
 
 
-    /*
     //  the json file is too large to push to github.
-    //string p3 = "/media/amax/Seagate Backup Plus Drive/cxt/data/MSCOCO/";
-    string p3 = "./data/MSCOCO/";
-    od::MSCoco coco = od::MSCoco(p3, 0);
+    string p3 = "/media/amax/Seagate Backup Plus Drive/cxt/data/MSCOCO/";
+    //string p3 = "./data/MSCOCO/";
+    od::MSCoco coco = od::MSCoco(p3, 1);
     cout << "Dataset name: " << coco.getDatasetName() << endl;
     cout << "Number of categories: " << coco.getNumOfClasses() << endl;
     cout << "Number of classlist: " << coco.getClassesList().size() << endl;
@@ -104,10 +105,13 @@ int main() {
     cout << "Number of test images: " << coco.getTestImageList().size() << endl;
     cout << "Number of annotated images: " << coco.getAllAnnotations().size() << endl;
     cout << "Annotation of image 233116.jpg: " << endl;
-    od::ODAnnotation a3 = coco.getAnnotationByName("233116");
+    od::ODAnnotation a3 = coco.getAnnotationByName("COCO_train2014_000000233116");
     cout << a3 << endl;
+    getchar();
     cout << endl;
-    */
+
+    coco.convertDatasetToLmdb("train", "/media/amax/cxt/data/Detection/lmdb/mscoco/train_lmdb_dec");
+    //coco.convertDatasetToLmdb("val", "/media/amax/cxt/data/Detection/lmdb/mscoco/val_lmdb_dec");
 
     /*
   const bool is_color = true;

@@ -189,6 +189,8 @@ namespace od
       filename = img_prefix + image_list[id] + enc;
       std::cout << filename << std::endl;
       od::ODAnnotation odan = anns[image_list[id]];
+      std::cout << "-------------------------" << std::endl;
+      std::cout << odan << std::endl;
 
       if (anno_type == "classification") {
         if (name_ != "ImageNet") {
@@ -206,6 +208,8 @@ namespace od
           anno_datum.clear_annotation_group();
           int ori_height, ori_width;
           GetImageSize(filename, &ori_height, &ori_width);
+          std::cout << "-----------------------------" << std::endl;
+          std::cout << ori_height << " " << ori_width << std::endl;
           status = read_bbox_to_annotated_datum(filename, odan, ori_height, ori_width,  &anno_datum);
           anno_datum.set_type(AnnotatedDatum_AnnotationType_BBOX);
         }
@@ -256,6 +260,8 @@ namespace od
 
     int height = annotation.height_;
     int width = annotation.width_;
+    std::cout << height << " " << width << std::endl;
+    std::cout << "-----------------------------" << std::endl;
     LOG_IF(WARNING, height != img_height) << filename <<  " inconsistent image height.";
     LOG_IF(WARNING, width != img_width) << filename <<  " inconsistent image width.";
     CHECK(width != 0 && height != 0) << filename << " no valid image width/height.";

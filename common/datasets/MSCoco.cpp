@@ -12,6 +12,48 @@
 namespace od
 {
 
+  void MSCoco::convertDatasetToLmdb(std::string subset, std::string save_dir, int resize_height, int resize_width)
+  {
+    std::cout << "Start converting MSCOCO dataset to lmdb ..." << std::endl;
+    std::vector<std::string> image_list;
+    std::string image_prefix = "";
+    if (subset == "train")
+    {
+      image_list = this->train_image_list_;
+      /*
+      for (int i = 0; i < image_list.size(); i++)
+          std::cout << image_list[i] << std::endl;
+        */
+      image_prefix = this->base_path_ + "Images/train2014/";
+    }
+    else if (subset == "val")
+    {
+      image_list = this->val_image_list_;
+      /*
+      for (int i = 0; i < image_list.size(); i++)
+          std::cout << image_list[i] << std::endl;
+          */
+      image_prefix = this->base_path_ + "Images/val2014/";
+    }
+    else if (subset == "trainval")
+    {
+      std::cerr << "Not supported yet." << std::endl;
+      return ;
+    }
+    else if (subset == "test")
+    {
+      std::cerr << "Not supported yet." << std::endl;
+      return ;
+    }
+    else
+    {
+      std:: cerr << "Please specifiy correct subset among 'train', 'val', 'trainval' and 'test'."<< std::endl;
+      return ;
+    }
+    convert_dataset_to_lmdb_detection(image_list, image_prefix, save_dir, resize_height, resize_width, "");
+    std::cout << "Convert finished!" << std::endl;
+  
+  }
   void MSCoco::loadJsonDataset()
   {
     // Parse train_annotation_path
@@ -80,16 +122,21 @@ namespace od
     //std::cout << imgs.Size() << std::endl;
     for (int i = 0; i < imgs.Size(); i++)
     {
+      /*
       int id = imgs[i]["id"].GetInt();
       char buff[33]; sprintf(buff, "%d", id);
       std::string sid = std::string(buff);    // use the id as the short form of image name, save the store space.
+      */
       std::string file_name = imgs[i]["file_name"].GetString();  // indeed, file_name = xxxxxx_00..00id.jpg
-      //int width = imgs[i]["width"].GetInt();
-      //int height = imgs[i]["height"].GetInt();
-      train_image_list_.push_back(sid);
-      trainval_image_list_.push_back(sid);
+      int width = imgs[i]["width"].GetInt();
+      int height = imgs[i]["height"].GetInt();
+      //train_image_list_.push_back(sid);
+      //trainval_image_list_.push_back(sid);
+      train_image_list_.push_back(file_name);
+      trainval_image_list_.push_back(file_name);
 
       //this->width_[id] = width; this->height_[id] = height;   // For annotation
+      this->width_[file_name] = width; this->height_[file_name] = height;   // For annotation
     }
 
     // load image list for validation set
@@ -97,16 +144,21 @@ namespace od
     //std::cout << imgs.Size() << std::endl;
     for (int i = 0; i < imgs.Size(); i++)
     {
+      /*
       int id = imgs[i]["id"].GetInt();
       char buff[33]; sprintf(buff, "%d", id);
       std::string sid = std::string(buff);
+      */
       std::string file_name = imgs[i]["file_name"].GetString();
-      //int width = imgs[i]["width"].GetInt();
-      //int height = imgs[i]["height"].GetInt();
-      val_image_list_.push_back(sid);
-      trainval_image_list_.push_back(sid);
+      int width = imgs[i]["width"].GetInt();
+      int height = imgs[i]["height"].GetInt();
+      //val_image_list_.push_back(sid);
+      //trainval_image_list_.push_back(sid);
+      val_image_list_.push_back(file_name);
+      trainval_image_list_.push_back(file_name);
 
-      //this->width_[id] = width; this->height_[id] = height;   // For annotation
+      // this->width_[id] = width; this->height_[id] = height;   // For annotation
+      this->width_[file_name] = width; this->height_[file_name] = height;   // For annotation
     }
 
     // load image list for test set
@@ -122,8 +174,8 @@ namespace od
   void MSCoco::loadAnnotations()
   {
 
-    std::map<int, std::vector<ODObject> > M;     // Store objects for each image
-    //std::map<std::string, ODAnnotation> annotations;
+    //std::map<int, std::vector<ODObject> > M;     // Store objects for each image
+    std::map<std::string, std::vector<ODObject> > M;     // Store objects for each image
  
     // load annotation of training set
     rj::Value& ann = (*train_doc_)["annotations"];
@@ -141,7 +193,9 @@ namespace od
 
       float bbox[] = {xmin, ymin, xmin+xd, ymin+yd};
       ODObject obj = ODObject(cate_id, "", 0, 0, bbox);
-      M[image_id].push_back(obj);
+      char buff[15]; sprintf(buff, "%012d", image_id);
+      std::string image_name = "COCO_train2014_" +  std::string(buff) + ".jpg";
+      M[image_name].push_back(obj);
     }
 
     // load annotation of validation set
@@ -160,15 +214,20 @@ namespace od
 
       float bbox[] = {xmin, ymin, xmin+xd, ymin+yd};
       ODObject obj = ODObject(cate_id, "", 0, 0, bbox);
-      M[image_id].push_back(obj);
+      //M[image_id].push_back(obj);
+      char buff[15]; sprintf(buff, "%012d", image_id);
+      std::string image_name = "COCO_val2014_" +  std::string(buff) + ".jpg";
+      M[image_name].push_back(obj);
     }
-    for (std::map<int, std::vector<ODObject> >::iterator it = M.begin(); it != M.end(); it++)
+    for (std::map<std::string, std::vector<ODObject> >::iterator it = M.begin(); it != M.end(); it++)
     {
-      //int width = this->width_[it->first];
-      //int height = this->height_[it->first];
-      char buff[33]; sprintf(buff, "%d", it->first);
-      std::string file_name = std::string(buff);
-      ODAnnotation annotation = ODAnnotation(it->second);    
+      std::string file_name = it->first;
+      int width = this->width_[file_name];
+      int height = this->height_[file_name];
+      //char buff[33]; sprintf(buff, "%d", it->first);
+      //std::string file_name = std::string(buff);
+      std::cout << file_name << " " << height << " " << width << std::endl;
+      ODAnnotation annotation = ODAnnotation(height, width, it->second);    
       this->annotations_[file_name] = annotation;
     }
     M.clear();
