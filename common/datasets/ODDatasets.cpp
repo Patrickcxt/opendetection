@@ -235,7 +235,10 @@ namespace od
 
       // Put in db
       std::string out;
-      CHECK(anno_datum.SerializeToString(&out));
+      if (anno_type =="classification")
+        CHECK(datum->SerializeToString(&out));
+      else if (anno_type == "detection")
+        CHECK(anno_datum.SerializeToString(&out));
       txn->Put(key_str, out);
 
       if (++count % 1000 == 0) {

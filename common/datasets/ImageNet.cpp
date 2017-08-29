@@ -18,17 +18,21 @@ namespace od
      std::string img_prefix = "";
      if (subset == "train")
      {
-       img_prefix = this->base_path_ + "train/";
        image_list = this->train_image_list_;
+       for (int i = 0; i < image_list.size(); i++)
+       {
+         std::cout << image_list[i] << std::endl;
+       }
+       img_prefix = this->base_path_ + "train/";
      }
      else if (subset == "val")
      {
-       for (int i = 0; i < val_image_list_.size(); i++)
+       image_list = this->val_image_list_;
+       for (int i = 0; i < image_list.size(); i++)
        {
-         std::cout << val_image_list_[i] << std::endl;
+         std::cout << image_list[i] << std::endl;
        }
        img_prefix =  this->base_path_ + "val/images/";
-       image_list = this->val_image_list_;
      }
      else if (subset == "trainval")
      {
@@ -78,6 +82,8 @@ namespace od
         std::cerr << "error: unable to open input file: " << wnids_path << std::endl;
         return;
     }
+
+    std::ofstream outfile(this->base_path_ + "synset_words.txt");
     int id = 0;
     while (getline(input, s))
     {
@@ -86,7 +92,9 @@ namespace od
       this->name2label_[label_name] = id;
       this->id2wnid_[id] = s;
       this->wnid2id_[s] = id++;
+      outfile << s << "\t" << label_name << std::endl;
     }
+    outfile.close();
     input.close();
     input.clear();
 
@@ -162,7 +170,6 @@ namespace od
         std::vector<std::string> items = split(s, '\t');
         
         std::string image_name = wnid + "/images/" + items[0];
-        std::cout << image_name << std::endl;
         float xmin = atof(items[1].c_str());
         float ymin = atof(items[2].c_str());
         float xmax = atof(items[3].c_str());

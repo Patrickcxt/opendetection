@@ -16,12 +16,13 @@ API Documentation - http://opendetection.com/annotated.html
 Short demo video - https://www.youtube.com/watch?v=sp8W0NspY54
 
 
-Od Datasets
+OD Datasets
 =============
 
 Code to provide unified api for datasets, eg. PascalVOC, ImageNet, MSCOCO.
 
 Main code is located in common/datasets/.
+Example code is located in examples/objectdetector/
 
 ### Preparation
 1. To produce lmdb for object detection, now ssd-caffe(https://github.com/weiliu89/caffe/tree/ssd) is needed to install.
@@ -130,6 +131,23 @@ Detection examples of ssd:
 <img src="./data/images/000137.jpg.png" width="200px">
 <img src="./data/images/000247.jpg.png" width="200px">
 </p>
+
+
+3. Example for classification on tiny-imagenet-200 dataset.
+```Shell
+# convert train and val subset to lmdb, and compute image mean.
+cd  build
+./examples/objectdetector/od_ssd_classification/prepare ../data/Classification/imagenet/
+
+# train the model in caffe directory.
+# model definition for tiny-imagenet (200 categories) has been provided in ./data/Classification/imagenet/models/bvlc_reference_caffenet/
+cd caffe_dir
+./build/tools/caffe train --solver=opendetection_dir/data/models/bvlc_reference_caffenet/solver.prototxt
+
+# classify an input image using the trained model.
+cd build
+./examples/objectdetector/od_ssd_classification/classify caffe_dir ../data/Classification/imagenet/models/bvlc_reference_caffenet/deploy.prototxt ../data/Classification/imagenet/models/bvlc_reference_caffenet/caffenet_train_iter_xxx.caffemodel ../data/Classification/imagenet/imagenet_mean.binaryproto tiny-imagenet-200_dir/synset_words.txt 
+```
 
 
 
