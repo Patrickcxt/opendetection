@@ -105,7 +105,7 @@ cd build
 ./examples/objectdetector/od_load_dataset
 ```
 
-#### Example to using SSD to perform object detection on PascalVOC 2007
+#### Example of using SSD to perform object detection on PascalVOC 2007
 ```Shell
 cd build
 # prepare lmdb and files needed by ssd.
@@ -119,17 +119,22 @@ cd ssd_root
 python examples/ssd/ssd_pascal.py
 python examples/ssd/score_ssd_pascal.py
 
-# perform detectection using the trained model.
+# perform detectection using the trained model. All path should be absolute path.
 cd build
-./examples/objectdetector/od_ssd_detect/detect
+./examples/objectdetector/od_ssd_detect/detect ssd_dir  \
+  ssd_dir/models/VGGNet/VOC0712/SSD_300x300/deploy.prototxt \
+  ssd_dir/models/VGGNet/VOC0712/SSD_300x300/VGG_VOC0712_SSD_300x300_iter_60000.caffemodel \
+  opendetection_dir/data/Detection/pascal/
+
 ```
 
 Detection examples of ssd:
 
 <p align="center">
-<img src="./data/images/000040.jpg.png" width="200px">
-<img src="./data/images/000137.jpg.png" width="200px">
-<img src="./data/images/000247.jpg.png" width="200px">
+<img src="./data/images/000040.jpg.png" width="300px">
+<img src="./data/images/001720.jpg.png" width="300px">
+<img src="./data/images/000346.jpg.png" width="300px">
+<img src="./data/images/000434.jpg.png" width="300px">
 </p>
 
 #### Example for classification on tiny-imagenet-200 dataset.
