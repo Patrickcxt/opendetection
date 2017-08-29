@@ -7,14 +7,14 @@
 
 #include "PascalVOC.h"
 
+/*
 #include "../../3rdparty/rapidxml/rapidxml.hpp"
 #include "../../3rdparty/rapidxml/rapidxml_utils.hpp"
+*/
 
-/*
 #include "3rdparty/rapidxml/rapidxml.hpp"
 #include "3rdparty/rapidxml/rapidxml_utils.hpp"
 #include "3rdparty/rapidxml/rapidxml_print.hpp"
-*/
 
 namespace rx = rapidxml;
 

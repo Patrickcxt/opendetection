@@ -53,3 +53,4 @@ OD_ADD_EXAMPLE(od_multialgo_pc FILES od_multialgo_pc.cpp
 # added by cxt
 OD_ADD_EXAMPLE(od_load_dataset FILES od_load_dataset.cpp
                 LINK_WITH od_common)
+add_subdirectory(od_ssd_detect)

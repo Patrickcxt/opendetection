@@ -33,8 +33,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define OPENDETECTION_MSCOCO_H
 
 #include "ODDatasets.h"
-#include "../../3rdparty/rapidjson/document.h"
-//#include "3rdparty/rapidjson/document.h"
+//#include "../../3rdparty/rapidjson/document.h"
+#include "3rdparty/rapidjson/document.h"
 
 namespace rj = rapidjson;
 
