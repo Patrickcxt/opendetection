@@ -27,6 +27,7 @@ Main code is located in common/datasets/.
 1. To produce lmdb for object detection, now ssd-caffe(https://github.com/weiliu89/caffe/tree/ssd) is needed to install.
 
 2. Download dataset, we now provide code for three popular datasets. Please organize the dataset as following:
+
 Pascal VOC (2007 for example):
 ```Shell
 voc_root
@@ -122,6 +123,13 @@ cd build
 ./examples/objectdetector/od_ssd_detect/detect
 ```
 
+Detection examples of ssd:
+
+<p align="center">
+<img src="./data/images/000040.jpg.png" width="300px">
+<img src="./data/images/000137.jpg.png" width="300px">
+<img src="./data/images/000247.jpg.png" width="300px">
+</p>
 
 
 
