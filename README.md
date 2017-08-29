@@ -98,14 +98,14 @@ coco_root
 We provide examples to use these api (build the opendetedtion project first).
 
 
-1. Apis we provide:
+#### Apis we provide:
 ```Shell
 # This examples will load the datasets of PascalVOC2007, tiny-imagenet and MSCOCO
 cd build
 ./examples/objectdetector/od_load_dataset
 ```
 
-2. Example to using SSD to perform object detection on PascalVOC 2007
+#### Example to using SSD to perform object detection on PascalVOC 2007
 ```Shell
 cd build
 # prepare lmdb and files needed by ssd.
@@ -132,8 +132,7 @@ Detection examples of ssd:
 <img src="./data/images/000247.jpg.png" width="200px">
 </p>
 
-
-3. Example for classification on tiny-imagenet-200 dataset.
+#### Example for classification on tiny-imagenet-200 dataset.
 ```Shell
 # convert train and val subset to lmdb, and compute image mean.
 cd  build
@@ -144,10 +143,24 @@ cd  build
 cd caffe_dir
 ./build/tools/caffe train --solver=opendetection_dir/data/models/bvlc_reference_caffenet/solver.prototxt
 
-# classify an input image using the trained model.
+# classify test images using the trained model.
 cd build
-./examples/objectdetector/od_ssd_classification/classify caffe_dir ../data/Classification/imagenet/models/bvlc_reference_caffenet/deploy.prototxt ../data/Classification/imagenet/models/bvlc_reference_caffenet/caffenet_train_iter_xxx.caffemodel ../data/Classification/imagenet/imagenet_mean.binaryproto tiny-imagenet-200_dir/synset_words.txt 
+./examples/objectdetector/od_ssd_classification/classify caffe_dir \
+  ../data/Classification/imagenet/models/bvlc_reference_caffenet/deploy.prototxt \
+  ../data/Classification/imagenet/models/bvlc_reference_caffenet/caffenet_train_iter_xxx.caffemodel \
+  ../data/Classification/imagenet/imagenet_mean.binaryproto \
+  tiny-imagenet-200_dir/synset_words.txt 
 ```
+example of classification output:
+```Shell
+---------- Prediction for /path/to/data/tiny-imagenet-200/test/images/test_3956.JPEG ----------
+0.3764 - "n02095889 Sealyham terrier, Sealyham"
+0.1704 - "n02096437 Dandie Dinmont, Dandie Dinmont terrier"
+0.0881 - "n02101556 clumber, clumber spaniel"
+0.0706 - "n02091635 otterhound, otter hound"
+0.0611 - "n02095314 wire-haired fox terrier"
+```
+
 
 
 
