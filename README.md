@@ -126,9 +126,9 @@ cd build
 Detection examples of ssd:
 
 <p align="center">
-<img src="./data/images/000040.jpg.png" width="300px">
-<img src="./data/images/000137.jpg.png" width="300px">
-<img src="./data/images/000247.jpg.png" width="300px">
+<img src="./data/images/000040.jpg.png" width="200px">
+<img src="./data/images/000137.jpg.png" width="200px">
+<img src="./data/images/000247.jpg.png" width="200px">
 </p>
 
 
