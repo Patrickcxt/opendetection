@@ -30,7 +30,12 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-
+#ifdef USE_CAFFE
+    cout << "Found" << endl;
+#else
+    cout << "Not Found" << endl;
+#endif
+    /*
     string p1 = "/home/amax/cxt/data/tiny-imagenet-200/";
     od::ImageNet imagenet = od::ImageNet(p1, 0);
     vector<string> test_images = imagenet.getTestImageList();
@@ -65,6 +70,7 @@ int main(int argc, char* argv[]) {
         pclose(sp);
         cout << "--------------------------------------------------------" << endl;
     }
+    */
 
 
     return 0;

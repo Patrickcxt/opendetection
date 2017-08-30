@@ -37,16 +37,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <boost/filesystem.hpp>
 #include "boost/scoped_ptr.hpp"
+
+#ifdef USE_CAFFE
 #include "gflags/gflags.h"
 #include "glog/logging.h"
+
 #include "caffe/proto/caffe.pb.h"
 #include "caffe/util/db.hpp"
 #include "caffe/util/format.hpp"
 #include "caffe/util/io.hpp"
 #include "caffe/util/rng.hpp"
-
 using namespace caffe;
-using std::pair;
+#endif
+
 
 namespace od
 {
@@ -248,7 +251,9 @@ namespace od
     // convert dataset to lmdb for detection, classification and detection will be merged later.
     void convert_dataset_to_lmdb_detection(std::vector<std::string> image_list, std::string img_prefix, std::string save_dir, int resize_height, int resize_width, std::string encode_type);
 
+#ifdef USE_CAFFE
     bool read_bbox_to_annotated_datum(const std::string filename, od::ODAnnotation annotation, const int img_height, const int img_width, AnnotatedDatum* anno_datum);
+#endif
 
   private:
 

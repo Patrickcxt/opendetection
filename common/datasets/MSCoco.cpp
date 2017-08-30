@@ -224,9 +224,7 @@ namespace od
       std::string file_name = it->first;
       int width = this->width_[file_name];
       int height = this->height_[file_name];
-      //char buff[33]; sprintf(buff, "%d", it->first);
-      //std::string file_name = std::string(buff);
-      std::cout << file_name << " " << height << " " << width << std::endl;
+      //std::cout << file_name << " " << height << " " << width << std::endl;
       ODAnnotation annotation = ODAnnotation(height, width, it->second);    
       this->annotations_[file_name] = annotation;
     }

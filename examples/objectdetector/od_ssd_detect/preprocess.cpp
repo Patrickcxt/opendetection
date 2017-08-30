@@ -22,14 +22,15 @@ int main(int argc, char* argv[]) {
 
 
     //string data_dir = "./data/Detection/pascal/";
-    string data_dir = argv[1];
-    string ssd_dir = "/home/amax/cxt/open_detection/packages/ssd/";
-    string sub_dir = "data/VOC0712/";
+    //string ssd_dir = "/home/amax/cxt/open_detection/packages/ssd/";
+    string ssd_dir = argv[1];
+    string data_dir = argv[2];
+    //string sub_dir = "data/VOC0712/";
     // create lmdb file
     cout << "creating lmdb for trainval subset" << endl;
-    if ((access((data_dir+"pascal_trainval_enc").c_str(), F_OK)) == -1)
+    if ((access((data_dir+"pascal_trainval_dec").c_str(), F_OK)) == -1)
     {
-        pascal.convertDatasetToLmdb("trainval", data_dir+"pascal_trainval_enc");
+        pascal.convertDatasetToLmdb("trainval", data_dir+"pascal_trainval_dec");
     }
     else
     {
@@ -37,9 +38,9 @@ int main(int argc, char* argv[]) {
     }
 
     cout << "creating lmdb for test subset" << endl;
-    if ((access((data_dir+"pascal_test_enc").c_str(), F_OK)) == -1)
+    if ((access((data_dir+"pascal_test_dec").c_str(), F_OK)) == -1)
     {
-        pascal.convertDatasetToLmdb("test", data_dir+"pascal_test_enc");
+        pascal.convertDatasetToLmdb("test", data_dir+"pascal_test_dec");
     }
     else
     {
@@ -87,7 +88,7 @@ int main(int argc, char* argv[]) {
         ofstream outfile(name_size_file);
         if (!outfile.good())
         {
-          LOG(FATAL)  << "Failed to open file: " << name_size_file;
+          cerr  << "Failed to open file: " << name_size_file << endl;
         }
         for (int i = 0; i < test_list.size(); i++)
         {
@@ -101,11 +102,6 @@ int main(int argc, char* argv[]) {
     {
         cout << "test_name_size.txt exists!" << endl;
     }
-    /*
-    src = "../path/to/test_name_size.txt";
-    dst = ssd_dir + sub_dir + "test_name_size.txt";
-    system("cp " + src + " " + dst);
-    */
 
     return 0;
 }

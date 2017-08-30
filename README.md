@@ -109,7 +109,7 @@ cd build
 ```Shell
 cd build
 # prepare lmdb and files needed by ssd.
-./examples/objectdetector/od_ssd_detect/preprocess  ../data/Detection/pascal/
+./examples/objectdetector/od_ssd_detect/preprocess  ssd_dir ../data/Detection/pascal/
 
 # copy trainval.txt, test.txt and test_name_size.txt to ssd directorys. ssd_dir is the root directory you install your ssd-caffe
 cp ../data/Detection/pascal/*.txt ssd_dir/data/VOC0712/
@@ -146,7 +146,7 @@ cd  build
 # train the model in caffe directory.
 # model definition for tiny-imagenet (200 categories) has been provided in ./data/Classification/imagenet/models/bvlc_reference_caffenet/
 cd caffe_dir
-./build/tools/caffe train --solver=opendetection_dir/data/models/bvlc_reference_caffenet/solver.prototxt
+./build/tools/caffe train --solver=opendetection_dir/data/Classification/imagenet/models/bvlc_reference_caffenet/solver.prototxt
 
 # classify test images using the trained model.
 cd build

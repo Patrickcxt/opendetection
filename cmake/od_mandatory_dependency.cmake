@@ -7,8 +7,12 @@ find_package(Boost 1.40 COMPONENTS program_options REQUIRED )
 
 set(Caffe_DIR /home/amax/cxt/open_detection/packages/ssd/build)
 find_package(Caffe REQUIRED)
-include_directories(${Caffe_INCLUDE_DIRS})
-add_definitions(${Caffe_DEFINITIONS})    # ex. -DCPU_ONLY
+if(Caffe_FOUND)
+    include_directories(${Caffe_INCLUDE_DIRS})
+    add_definitions(-DUSE_CAFFE=${Caffe_DEFINITIONS})    # ex. -DCPU_ONLY
+else()
+    message(Caffe  NotFound)
+endif()
 #target_link_libraries(${Caffe_LIBRARIES})
 
 include_directories("${OD_SOURCE_DIR}" ${EIGEN_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} ${PCL_INCLUDE_DIRS} ${OD_SOURCE_DIR}/3rdparty/SiftGPU/src/SiftGPU)

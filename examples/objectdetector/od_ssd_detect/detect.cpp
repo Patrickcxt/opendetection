@@ -33,8 +33,6 @@ int main(int argc, char* argv[]) {
     string model_def = argv[2];
     string snapshot_path = argv[3];
     string data_dir = argv[4];
-    //string current_root = "/home/amax/cxt/open_detection/opendetection/mybuild/examples/objectdetector/od_ssd_detect/";
-    //string ssd_root = "/home/amax/cxt/open_detection/packages/ssd/";
 
     // create image_list file that you want to detect
     ofstream outfile(data_dir + "image_list.txt");
@@ -53,8 +51,6 @@ int main(int argc, char* argv[]) {
     string cmd_sp1 = "cd " + ssd_dir + " && ./build/examples/ssd/ssd_detect " + model_def + " " + snapshot_path + " "
         + data_dir+"image_list.txt "  + " -confidence_threshold 0.5 -out_file " + data_dir + "result/output";
 
-    //string cmd_sp1 = "cd " + ssd_root + " && ./build/examples/ssd/ssd_detect ./models/VGGNet/VOC0712/SSD_300x300/deploy.prototxt ./models/VGGNet/VOC0712/SSD_300x300/VGG_VOC0712_SSD_300x300_iter_60000.caffemodel " + current_root + "image_list.txt " + " -confidence_threshold 0.5 -out_file " + current_root + "/save/result";
-    //
     cout << cmd_sp1 << endl;
     FILE* sp1 = popen(cmd_sp1.c_str(), "r");
     if (!sp1)
@@ -65,9 +61,6 @@ int main(int argc, char* argv[]) {
     pclose(sp1);
 
     string cmd_sp2 = "python " + ssd_dir+"examples/ssd/plot_detections.py --labelmap-file " + ssd_dir+"data/VOC0712/labelmap_voc.prototxt --visualize-threshold 0.5 --save-dir " + data_dir+"./result/ " + data_dir+"./result/output " + "/";
-    //string cmd = "python " + ssd_root+"examples/ssd/plot_detections.py --labelmap-file " + ssd_root+"data/VOC0712/labelmap_voc.prototxt --visualize-threshold 0.5 --save-dir " + "./save/ " + ssd_root+"./models/VGGNet/VOC0712/save/result " + "/";
-
-    
     cout << cmd_sp2 << endl;
     FILE* sp2 = popen(cmd_sp2.c_str(), "r");
     if (!sp2)

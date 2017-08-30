@@ -32,21 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <algorithm>
 #include <utility>
 
-/*
-#include <boost/filesystem.hpp>
-#include "boost/scoped_ptr.hpp"
-#include "gflags/gflags.h"
-#include "glog/logging.h"
 
-#include "caffe/proto/caffe.pb.h"
-#include "caffe/util/db.hpp"
-#include "caffe/util/format.hpp"
-#include "caffe/util/io.hpp"
-#include "caffe/util/rng.hpp"
-*/
-
-using namespace caffe;
-using std::pair;
 using boost::scoped_ptr;
 
 namespace bf = boost::filesystem;
@@ -133,6 +119,7 @@ namespace od
   void ODDataset::convert_dataset_to_lmdb_detection(std::vector<std::string> image_list, std::string img_prefix,
       std::string save_dir, int resize_height, int resize_width, std::string encode_type) {
 
+#ifdef USE_CAFFE
     std::map<std::string, ODAnnotation> anns = annotations_;
 
     const bool is_color = true;
@@ -254,12 +241,16 @@ namespace od
       txn->Commit();
       LOG(INFO) << "Processed " << count << " files.";
     }
+#else
+    std::cerr << "This function requires caffe-ssd." << std::endl;
+#endif  // USE_CAFFE
   }
 
   /**
    * This function is modified from "caffe(ssd)/util/io.cpp/ReadXMLFromAnnotatedDatum
    */
-  bool ODDataset::read_bbox_to_annotated_datum(const std::string filename, od::ODAnnotation annotation, const int img_height, const int img_width,  AnnotatedDatum* anno_datum) {
+#ifdef USE_CAFFE
+  bool ODDataset::read_bbox_to_annotated_datum(const std::string filename, od::ODAnnotation annotation, const int img_height, const int img_width, AnnotatedDatum* anno_datum) {
 
     int height = annotation.height_;
     int width = annotation.width_;
@@ -339,103 +330,6 @@ namespace od
     }
     return true;
   }
+#endif // USE_CAFFE
 
-
-  /**
-   * This code is modified form convert_imageset.cpp of caffe.
-   */
-  /*
-  void ODDataset::convert_dataset_to_lmdb(std::vector<std::string> image_list, std::string img_prefix, std::string save_dir,
-          int resize_height, int resize_width) {
-    const bool is_color = true;
-    const bool check_size = false;
-    const bool encoded = false;
-    const bool is_shuffle = true;
-    const string encode_type = "";
-
-
-    std::map<std::string, ODAnnotation> anns =  annotations_;
-
-    if (is_shuffle) {
-      // randomly shuffle data
-      LOG(INFO) << "Shuffling data";
-      shuffle(image_list.begin(), image_list.end());
-    }
-
-    if (encode_type.size() && !encoded)
-      LOG(INFO) << "encode_type specified, assuming encoded=true.";
-
-    // Create new DB
-    boost::scoped_ptr<db::DB> db(db::GetDB("lmdb"));
-    db->Open(save_dir, db::NEW);
-    boost::scoped_ptr<db::Transaction> txn(db->NewTransaction());
-
-    // Storing to db
-    Datum datum;
-    int count = 0;
-    int data_size = 0;
-    bool data_size_initialized = false;
-
-    for (int i = 0; i < image_list.size(); i++) {
-      bool status;
-      std::cout << image_list[i] << std::endl;
-      std::string enc = encode_type;
-      if (encoded && !enc.size()) {
-        // Guess the encoding type from the file name
-        string fn = image_list[i];
-        std::cout << fn << std::endl;
-        size_t p = fn.rfind('.');
-        if ( p == fn.npos )
-          LOG(WARNING) << "Failed to guess the encoding of '" << fn << "'";
-        enc = fn.substr(p);
-        std::transform(enc.begin(), enc.end(), enc.begin(), ::tolower);
-      }
-
-      //  load image to datum
-      std::vector<std::string> items = split(image_list[i], '/');
-      std::string image_name = items[items.size()-1];
-      od::ODAnnotation an = anns[image_name];
-      int label = an.objects_[0].label_;
-      status = ReadImageToDatum(img_prefix + image_list[i], label, resize_height, resize_width, is_color,
-        enc, &datum);
-
-
-      if (status == false) continue;
-      if (check_size) {
-        if (!data_size_initialized) {
-          data_size = datum.channels() * datum.height() * datum.width();
-          data_size_initialized = true;
-          //std::cout << "size of first data: " << data_size << std::endl;
-        } else {
-          const std::string& data = datum.data();
-          CHECK_EQ(data.size(), data_size) << "Incorrect data field size " << data.size();
-        }
-      }
-      // sequential
-      //string key_str = caffe::format_int(line_id, 8) + "_" + lines[line_id].first;
-      string key_str = image_list[i];
-
-      // Put in db
-      string out;
-      CHECK(datum.SerializeToString(&out));
-      txn->Put(key_str, out);
-
-      if (++count % 1000 == 0) {
-        std::cout << an << std::endl;
-        std::cout << img_prefix + image_name << " " << label  << std::endl;
-        // Commit db
-        txn->Commit();
-        txn.reset(db->NewTransaction());
-        LOG(INFO) << "Processed " << count << " files.";
-      }
-    }
-
-    // write the last batch
-    if (count % 100 != 0) {
-      txn->Commit();
-      LOG(INFO) << "Processed " << count << " files.";
-    }     
-  
-  }
-  */
 }
